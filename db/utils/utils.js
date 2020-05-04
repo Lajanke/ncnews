@@ -6,7 +6,13 @@ exports.formatDates = list => {
     });
 };
 
-exports.makeRefObj = list => {};
+exports.makeRefObj = list => {
+    const ref = list.reduce((newRef, article) => {
+        newRef[article['title']] = article['article_id'];
+        return newRef
+    }, {});
+    return ref;
+};
 
 exports.formatComments = (comments, articleRef) => {};
 

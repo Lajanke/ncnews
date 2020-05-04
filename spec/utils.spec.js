@@ -34,7 +34,7 @@ describe('formatDates', () => {
   });
   test('Does not alter any other data in the object', () => {
     output = formatDates(commentInput);
-    expect(Object.keys(output[0])).toEqual(['body', 'belongs_to', 'created_by', 'votes', 'created_at'])
+    expect(Object.keys(output[1])).toEqual(['body', 'belongs_to', 'created_by', 'votes', 'created_at'])
     expect(output[0]).toEqual(
       {
         body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
@@ -57,7 +57,31 @@ describe('formatDates', () => {
   });
 });
 
-describe('makeRefObj', () => { });
+describe.only('makeRefObj', () => {
+  const input = [
+    {'article_id': 1, 'title': 'A'},
+    {'article_id': 2, 'title': 'B'},
+    {'article_id': 3, 'title': 'C'},
+  ];
+  const output = {'A': 1, 'B': 2, 'C': 3}
+  test('When passed an empty array, returns an empty object', () => {
+    expect(makeRefObj([])).toEqual({});
+  });
+  test('Returns a lookup object with a key of title and a value of article_id', () => {
+    expect(makeRefObj([{'article_id': 1, 'title': 'A'}])).toEqual({'A': 1});
+  });
+  test('Works for longer arrays', () => {
+    expect(makeRefObj(input)).toEqual(output);
+  });
+  test('Does not mutate input', () => {
+    makeRefObj(input)
+    expect(input).toEqual([
+      {'article_id': 1, 'title': 'A'},
+      {'article_id': 2, 'title': 'B'},
+      {'article_id': 3, 'title': 'C'},
+    ])
+  })
+});
 
 describe('formatComments', () => { });
 
