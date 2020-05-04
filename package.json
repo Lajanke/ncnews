@@ -9,7 +9,9 @@
     "seed-make": "knex migrate:make",
     "migrate-make": "knex migrate:make",
     "migrate-latest": "knex migrate:latest",
+    "test-migrate-latest": "NODE_ENV=test npm run migrate-latest",
     "migrate-rollback": "knex migrate:rollback",
+    "test-migrate-rollback": "NODE_ENV=test npm run migrate-rollback",
     "test-utils": "mocha spec/utils.spec.js",
     "test": "jest"
   },
