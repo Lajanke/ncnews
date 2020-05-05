@@ -50,4 +50,16 @@ describe('/api', () => {
             });
         });
     });
+    describe.only('/users/:username', () => {
+        describe('GET', () => {
+            test('Status 200: Only one user returned. Returns array in the body with a length of 1', () => {
+                return request(app)
+                    .get('/api/users/butter_bridge')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.user.length).toBe(1);
+                    });
+            });
+        });
+    });
 });
