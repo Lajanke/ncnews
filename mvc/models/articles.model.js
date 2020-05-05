@@ -7,8 +7,8 @@ const fetchArticle = (id) => {
     .count('comments.article_id as comment_count')
     .groupBy('articles.article_id')
     .where('articles.article_id', '=', id)
-    .then((result) => {
-        return result
+    .then((res) => {
+        return res;
     });
 };
 
@@ -23,14 +23,24 @@ const alterVotes = (id, newVotes) => {
 }
 
 const postNewComment = (id, username, body) => {
-    const newComment = { article_id: id, author: username, body: body }
-    console.log(newComment)
+    const newComment = { article_id: id, author: username, body: body };
     return connection('comments')
         .insert(newComment)
         .returning('*')
         .then((res) => {
-            console.log(res)
             return [res[0].body];
-        })
+        });
 }
-module.exports = { fetchArticle, alterVotes, postNewComment }
+
+const fetchArticleComments = (id) => {
+    return connection('comments')
+        .where('article_id', '=', id)
+        .select('comment_id', 'author', 'votes', 'created_at', 'body',)
+        .then((res) => {
+            return res;
+        });
+};
+
+//need to add sortby and order queries.
+
+module.exports = { fetchArticle, alterVotes, postNewComment, fetchArticleComments }

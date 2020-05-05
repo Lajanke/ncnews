@@ -179,6 +179,8 @@ describe('/api', () => {
                     });
             });
         });
+    });
+    describe('/articles/:article_id/comments', () => {
         describe('POST', () => {
             test('status 201, posts comment to article', () => {
                 return request(app)
@@ -194,15 +196,32 @@ describe('/api', () => {
                             });
                     });
             });
+            describe('GET', () => {
+                test('status 201: Returns all comments for a given article id', () => {
+                    return request(app)
+                        .get('/api/articles/1/comments')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.comments.length).toBe(13);
+                        });
+                });
+                test('status 201: Each comment has certain keys. And only 5 keys.', () => {
+                    return request(app)
+                        .get('/api/articles/1/comments')
+                        .expect(200)
+                        .then((res) => {
+                            res.body.comments.forEach(comment => {
+                                expect(comment).toHaveProperty('comment_id');
+                                expect(comment).toHaveProperty('votes');
+                                expect(comment).toHaveProperty('created_at');
+                                expect(comment).toHaveProperty('author');
+                                expect(comment).toHaveProperty('body');
+                                expect(Object.keys(comment).length).toBe(5);
+                            });
+                        });
+                });
+            });
         });
     });
 });
 
-/*
-Request body accepts
-an object with the following properties:
-username
-body
-Responds with
-the posted comment
-*/
