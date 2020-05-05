@@ -4,15 +4,23 @@ const request = require('supertest');
 const app = require('../app.js');
 const connection = require('../connection.js');
 
-
-beforeEach(() => {
-    return connection.seed.run()
+describe('/api', () => {
+    beforeEach(() => {
+        return connection.seed.run()
+    });
+    afterAll(() => {
+        return connection.destroy();
+    });
+    describe('/topics', () => {
+        describe('GET', () => {
+            test('', () => {
+                return request(app)
+                    .get('/api/topics')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.topics).toEqual([])
+                    });
+            })
+        });
+    });
 });
-
-afterAll(() => {
-    connection.destroy();
-});
-
-describe('api', () => {
-   
-})

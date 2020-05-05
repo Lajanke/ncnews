@@ -1,8 +1,7 @@
 const express = require('express');
 const apiRouter = express.Router();
+const topicsRouter = require('./topics.router.js')
 
-apiRouter.route('/').get((req, res, next) => {
-    console.log('in api router')
-})
+apiRouter.use('/topics', topicsRouter);
 
 module.exports = apiRouter;
