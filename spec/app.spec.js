@@ -98,7 +98,47 @@ describe('/api', () => {
                     .then((res) => {
                         expect(res.body.article.length).toBe(1);
                     });
-            })
-        })
-    })
+            });
+            test('Returned article has certain properties', () => {
+                return request(app)
+                    .get('/api/articles/1')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article[0]).toHaveProperty('article_id');
+                        expect(res.body.article[0]).toHaveProperty('title');
+                        expect(res.body.article[0]).toHaveProperty('body');
+                        expect(res.body.article[0]).toHaveProperty('votes');
+                        expect(res.body.article[0]).toHaveProperty('topic');
+                        expect(res.body.article[0]).toHaveProperty('author');
+                        expect(res.body.article[0]).toHaveProperty('created_at');
+                        expect(res.body.article[0]).toHaveProperty('comment_count');
+                    });
+            });
+            test('Returned article does not return more columns/properties than it should.', () => {
+                return request(app)
+                    .get('/api/articles/1')
+                    .expect(200)
+                    .then((res) => {
+                        expect(Object.keys(res.body.article[0]).length).toBe(8);
+                    });
+            });
+            test('Works for an article with 0 comments', () => {
+                return request(app)
+                    .get('/api/articles/12')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article).toEqual([{
+                            article_id: 12,
+                            title: 'Moustache',
+                            body: 'Have you seen the size of that thing?',
+                            votes: 0,
+                            topic: 'mitch',
+                            author: 'butter_bridge',
+                            created_at: '1974-11-26T12:21:54.171Z',
+                            comment_count: '0'
+                        }]);
+                    });
+            });
+        });
+    });
 });
