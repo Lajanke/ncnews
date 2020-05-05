@@ -112,6 +112,7 @@ describe('/api', () => {
                         expect(res.body.article[0]).toHaveProperty('author');
                         expect(res.body.article[0]).toHaveProperty('created_at');
                         expect(res.body.article[0]).toHaveProperty('comment_count');
+                        expect(res.body.article[0].comment_count).toEqual('13');
                     });
             });
             test('Returned article does not return more columns/properties than it should.', () => {
@@ -140,43 +141,68 @@ describe('/api', () => {
                     });
             });
         });
-        describe.only('PATCH', () => {
+        describe('PATCH', () => {
             test('Status: 200. Only 1 article returned in response', () => {
                 return request(app)
-                .patch('/api/articles/12')
-                .send({inc_votes: 1})
-                .expect(200)
-                .then((res) => {
-                    expect(res.body.article.length).toBe(1);
-                });
+                    .patch('/api/articles/12')
+                    .send({ inc_votes: 1 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article.length).toBe(1);
+                    });
             });
             test('Status: 200. Increases votes when passed positive integer', () => {
                 return request(app)
-                .patch('/api/articles/12')
-                .send({inc_votes: 1})
-                .expect(200)
-                .then((res) => {
-                    expect(res.body.article[0].votes).toBe(1);
-                });
+                    .patch('/api/articles/12')
+                    .send({ inc_votes: 1 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article[0].votes).toBe(1);
+                    });
             });
             test('Status: 200. decreases votes when passed negative integer', () => {
                 return request(app)
-                .patch('/api/articles/1')
-                .send({inc_votes: -50})
-                .expect(200)
-                .then((res) => {
-                    expect(res.body.article[0].votes).toBe(50);
-                });
+                    .patch('/api/articles/1')
+                    .send({ inc_votes: -50 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article[0].votes).toBe(50);
+                    });
             });
             test('Status: 200. Returns article in the same format as get request', () => {
                 return request(app)
-                .patch('/api/articles/1')
-                .send({inc_votes: -50})
-                .expect(200)
-                .then((res) => {
-                    expect(res.body.article[0]).toHaveProperty('comment_count');
-                });
+                    .patch('/api/articles/1')
+                    .send({ inc_votes: -50 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article[0]).toHaveProperty('comment_count');
+                    });
+            });
+        });
+        describe('POST', () => {
+            test('status 201, posts comment to article', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'lurker', body: 'I have posted.' })
+                    .expect(201)
+                    .then((res) => {
+                        expect(res.body.comment[0]).toBe('I have posted.');
+                        return request(app)
+                            .get('/api/articles/1')
+                            .then((res) => {
+                                expect(res.body.article[0].comment_count).toBe('14');
+                            });
+                    });
             });
         });
     });
 });
+
+/*
+Request body accepts
+an object with the following properties:
+username
+body
+Responds with
+the posted comment
+*/

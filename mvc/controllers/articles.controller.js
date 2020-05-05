@@ -1,4 +1,4 @@
-const { fetchArticle, alterVotes } = require('../models/articles.model');
+const { fetchArticle, alterVotes, postNewComment } = require('../models/articles.model');
 
 const getArticle = (req, res, next) => {
     const { article_id } = req.params;
@@ -17,4 +17,13 @@ const patchVotes = (req, res, next) => {
     }) 
 }
 
-module.exports = { getArticle, patchVotes };
+const postComment = (req, res, next) => {
+    const { article_id } = req.params;
+    const { username, body } = req.body;
+    postNewComment(article_id, username, body)
+    .then((comment) => {
+        res.status(201).send({ comment })
+    })
+}
+
+module.exports = { getArticle, patchVotes, postComment };

@@ -22,4 +22,15 @@ const alterVotes = (id, newVotes) => {
         })
 }
 
-module.exports = { fetchArticle, alterVotes }
+const postNewComment = (id, username, body) => {
+    const newComment = { article_id: id, author: username, body: body }
+    console.log(newComment)
+    return connection('comments')
+        .insert(newComment)
+        .returning('*')
+        .then((res) => {
+            console.log(res)
+            return [res[0].body];
+        })
+}
+module.exports = { fetchArticle, alterVotes, postNewComment }
