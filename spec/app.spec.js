@@ -40,6 +40,14 @@ describe('/api', () => {
                         expect(Object.keys(res.body.topics[0]).length).toBe(2);
                     });
             });
+            test('Returns topics ordered alphabetically by slug', () => {
+                return request(app)
+                    .get('/api/topics')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.topics).toBeSortedBy('slug');
+                    });
+            });
         });
     });
 });
