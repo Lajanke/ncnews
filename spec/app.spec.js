@@ -89,7 +89,7 @@ describe('/api', () => {
             });
         });
     });
-    describe.only('/articles', () => {
+    describe('/articles', () => {
         describe('GET', () => {
             test('Status 200: Only one article returned. Returns array in the body with a length of 1', () => {
                 return request(app)
@@ -138,6 +138,44 @@ describe('/api', () => {
                             comment_count: '0'
                         }]);
                     });
+            });
+        });
+        describe.only('PATCH', () => {
+            test('Status: 200. Only 1 article returned in response', () => {
+                return request(app)
+                .patch('/api/articles/12')
+                .send({inc_votes: 1})
+                .expect(200)
+                .then((res) => {
+                    expect(res.body.article.length).toBe(1);
+                });
+            });
+            test('Status: 200. Increases votes when passed positive integer', () => {
+                return request(app)
+                .patch('/api/articles/12')
+                .send({inc_votes: 1})
+                .expect(200)
+                .then((res) => {
+                    expect(res.body.article[0].votes).toBe(1);
+                });
+            });
+            test('Status: 200. decreases votes when passed negative integer', () => {
+                return request(app)
+                .patch('/api/articles/1')
+                .send({inc_votes: -50})
+                .expect(200)
+                .then((res) => {
+                    expect(res.body.article[0].votes).toBe(50);
+                });
+            });
+            test('Status: 200. Returns article in the same format as get request', () => {
+                return request(app)
+                .patch('/api/articles/1')
+                .send({inc_votes: -50})
+                .expect(200)
+                .then((res) => {
+                    expect(res.body.article[0]).toHaveProperty('comment_count');
+                });
             });
         });
     });

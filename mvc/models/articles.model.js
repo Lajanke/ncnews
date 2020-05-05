@@ -8,23 +8,18 @@ const fetchArticle = (id) => {
     .groupBy('articles.article_id')
     .where('articles.article_id', '=', id)
     .then((result) => {
-        console.log(result)
         return result
     });
-   
 };
 
-module.exports = { fetchArticle }
+const alterVotes = (id, newVotes) => {
+    return connection('articles')
+        .where('article_id', '=', id)
+        .increment('votes', newVotes)
+        .then(() => {
+            const res = fetchArticle(id);
+            return res;
+        })
+}
 
-/*
-an article object, which should have the following properties:
-
-author which is the username from the users table
-title
-article_id
-body
-topic
-created_at
-votes
------comment_count which is the total count of all the comments with this article_id - you should make use of knex queries in order to achieve this
-*/
+module.exports = { fetchArticle, alterVotes }
