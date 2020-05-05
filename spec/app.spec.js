@@ -13,7 +13,7 @@ describe('/api', () => {
     });
     describe('/topics', () => {
         describe('GET', () => {
-            test('Status: Returns an array in the body with a length of 3', () => {
+            test('Status 200: Returns an array in the body with a length of 3', () => {
                 return request(app)
                     .get('/api/topics')
                     .expect(200)
@@ -89,4 +89,16 @@ describe('/api', () => {
             });
         });
     });
+    describe.only('/articles', () => {
+        describe('GET', () => {
+            test('Status 200: Only one article returned. Returns array in the body with a length of 1', () => {
+                return request(app)
+                    .get('/api/articles/1')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article.length).toBe(1);
+                    });
+            })
+        })
+    })
 });
