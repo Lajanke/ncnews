@@ -89,7 +89,7 @@ describe('/api', () => {
             });
         });
     });
-    describe('/articles', () => {
+    describe('/articles/:article_id', () => {
         describe('GET', () => {
             test('Status 200: Only one article returned. Returns array in the body with a length of 1', () => {
                 return request(app)
@@ -104,13 +104,12 @@ describe('/api', () => {
                     .get('/api/articles/1')
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.article[0]).toHaveProperty('article_id');
-                        expect(res.body.article[0]).toHaveProperty('title');
-                        expect(res.body.article[0]).toHaveProperty('body');
-                        expect(res.body.article[0]).toHaveProperty('votes');
-                        expect(res.body.article[0]).toHaveProperty('topic');
                         expect(res.body.article[0]).toHaveProperty('author');
+                        expect(res.body.article[0]).toHaveProperty('title');
+                        expect(res.body.article[0]).toHaveProperty('article_id');
+                        expect(res.body.article[0]).toHaveProperty('topic');
                         expect(res.body.article[0]).toHaveProperty('created_at');
+                        expect(res.body.article[0]).toHaveProperty('votes');
                         expect(res.body.article[0]).toHaveProperty('comment_count');
                         expect(res.body.article[0].comment_count).toEqual('13');
                     });
@@ -196,7 +195,7 @@ describe('/api', () => {
                             });
                     });
             });
-            describe.only('GET', () => {
+            describe('GET', () => {
                 test('status 201: Returns all comments for a given article id', () => {
                     return request(app)
                         .get('/api/articles/1/comments')
@@ -259,5 +258,40 @@ describe('/api', () => {
             });
         });
     });
+    describe.only('/articles', () => {
+        describe('GET', () => {
+            test('Status 200: When requesting all articles responds with all', () => {
+                return request(app)
+                .get('/api/articles')
+                .expect(200)
+                .then((res) => {
+                    expect(res.body.articles.length).toBe(12);
+                })
+            })
+            test('Status 200: All articles have certain keys and no more', () => {
+                return request(app)
+                .get('/api/articles')
+                .expect(200)
+                .then((res) => {
+                    res.body.articles.forEach(article => {
+                        expect(article).toHaveProperty('author');
+                        expect(article).toHaveProperty('title');
+                        expect(article).toHaveProperty('article_id');
+                        expect(article).toHaveProperty('topic');
+                        expect(article).toHaveProperty('created_at');
+                        expect(article).toHaveProperty('votes');
+                        expect(article).toHaveProperty('comment_count');
+                        expect(Object.keys(article).length).toBe(7);
+                    })
+                })
+            })
+        })
+    })
 });
 
+/*
+sort_by, which sorts the articles by any valid column (defaults to date)
+order, which can be set to asc or desc for ascending or descending (defaults to descending)
+author, which filters the articles by the username value specified in the query
+topic, which filters the articles by the topic value specified in the query
+*/

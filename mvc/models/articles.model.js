@@ -42,6 +42,23 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
         });
 };
 
-//need to add sortby and order queries.
+const fetchAllArticles = () => {
+    return connection('articles')
+        .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
+        .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes')
+        .count('comments.article_id as comment_count')
+        .groupBy('articles.article_id')
+        .then((res) => {
+            return res;
+        });
+}
 
-module.exports = { fetchArticle, alterVotes, postNewComment, fetchArticleComments }
+
+/*
+sort_by, which sorts the articles by any valid column (defaults to date)
+order, which can be set to asc or desc for ascending or descending (defaults to descending)
+author, which filters the articles by the username value specified in the query
+topic, which filters the articles by the topic value specified in the query
+*/
+
+module.exports = { fetchArticle, alterVotes, postNewComment, fetchArticleComments, fetchAllArticles }
