@@ -6,7 +6,7 @@ const connection = require('../connection.js');
 
 describe('/api', () => {
     beforeEach(() => {
-        return connection.seed.run()
+        return connection.seed.run();
     });
     afterAll(() => {
         return connection.destroy();
@@ -84,7 +84,7 @@ describe('/api', () => {
                     .expect(200)
                     .then((res) => {
                         expect(res.body.user[0].avatar_url).toBe('https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png');
-                        expect(res.body.user[0].name).toBe('do_nothing')
+                        expect(res.body.user[0].name).toBe('do_nothing');
                     });
             });
         });
@@ -195,40 +195,43 @@ describe('/api', () => {
                             });
                     });
             });
-            describe('GET', () => {
-                test('status 201: Returns all comments for a given article id', () => {
-                    return request(app)
-                        .get('/api/articles/1/comments')
-                        .expect(200)
-                        .then((res) => {
-                            expect(res.body.comments.length).toBe(13);
+
+        });
+        describe('GET', () => {
+            test('status 201: Returns all comments for a given article id', () => {
+                return request(app)
+                    .get('/api/articles/1/comments')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comments.length).toBe(13);
+                    });
+            });
+            test('status 201: Each comment has certain keys. And only 5 keys.', () => {
+                return request(app)
+                    .get('/api/articles/1/comments')
+                    .expect(200)
+                    .then((res) => {
+                        res.body.comments.forEach(comment => {
+                            expect(comment).toHaveProperty('comment_id');
+                            expect(comment).toHaveProperty('votes');
+                            expect(comment).toHaveProperty('created_at');
+                            expect(comment).toHaveProperty('author');
+                            expect(comment).toHaveProperty('body');
+                            expect(Object.keys(comment).length).toBe(5);
                         });
-                });
-                test('status 201: Each comment has certain keys. And only 5 keys.', () => {
-                    return request(app)
-                        .get('/api/articles/1/comments')
-                        .expect(200)
-                        .then((res) => {
-                            res.body.comments.forEach(comment => {
-                                expect(comment).toHaveProperty('comment_id');
-                                expect(comment).toHaveProperty('votes');
-                                expect(comment).toHaveProperty('created_at');
-                                expect(comment).toHaveProperty('author');
-                                expect(comment).toHaveProperty('body');
-                                expect(Object.keys(comment).length).toBe(5);
-                            });
+                    });
+            });
+            test('Defaults to be sorted by created_at in descending order', () => {
+                return request(app)
+                    .get('/api/articles/1/comments')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comments).toBeSortedBy('created_at', {
+                            descending: true,
                         });
-                });
-                test('Defaults to be sorted by created_at in descending order', () => {
-                    return request(app)
-                        .get('/api/articles/1/comments')
-                        .expect(200)
-                        .then((res) => {
-                            expect(res.body.comments).toBeSortedBy('created_at', {
-                                descending: true,
-                            });
-                        });
-                });
+                    });
+            });
+            describe('queries', () => {
                 test('Queries: Accepts an order query to change to ascending', () => {
                     return request(app)
                         .get('/api/articles/1/comments?order=asc')
@@ -266,8 +269,8 @@ describe('/api', () => {
                     .expect(200)
                     .then((res) => {
                         expect(res.body.articles.length).toBe(12);
-                    })
-            })
+                    });
+            });
             test('Status 200: All articles have certain keys and no more', () => {
                 return request(app)
                     .get('/api/articles')
@@ -341,7 +344,7 @@ describe('/api', () => {
                             expect(res.body.articles.length).toBe(11);
                             res.body.articles.forEach(article => {
                                 expect(article.topic).toBe('mitch');
-                            })
+                            });
                         });
                 });
             })
@@ -389,16 +392,16 @@ describe('/api', () => {
         describe('DELETE', () => {
             test('Deletes comment with matching id', () => {
                 return request(app)
-                .del('/api/comments/2')
-                .expect(204)
-                .then(() => {
-                    return request(app)
-                        .get('/api/articles/1/comments')
-                        .expect(200)
-                        .then((res) => {
-                            expect(res.body.comments.length).toBe(12);
-                        });
-                });
+                    .del('/api/comments/2')
+                    .expect(204)
+                    .then(() => {
+                        return request(app)
+                            .get('/api/articles/1/comments')
+                            .expect(200)
+                            .then((res) => {
+                                expect(res.body.comments.length).toBe(12);
+                            });
+                    });
             });
         });
     });

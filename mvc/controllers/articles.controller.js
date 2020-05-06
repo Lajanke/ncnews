@@ -5,8 +5,8 @@ const getArticle = (req, res, next) => {
     fetchArticle(article_id)
         .then((article) => {
             res.status(200).send({ article });
-        })
-}
+        });
+};
 
 const patchVotes = (req, res, next) => {
     const { article_id } = req.params;
@@ -31,17 +31,16 @@ const getArticleComments = (req, res, next) => {
     const { sort_by, order } = req.query;
     fetchArticleComments(article_id, sort_by, order)
         .then((comments) => {
-            console.log(comments)
             res.status(200).send({ comments });
         });
 };
 
 const getAllArticles = (req, res, next) => {
-    const { sort_by, order, author, topic } = req.query
+    const { sort_by, order, author, topic } = req.query;
     fetchAllArticles(sort_by, order, author, topic)
-    .then((articles) => {
-        res.status(200).send({ articles })
-    })
-}
+        .then((articles) => {
+            res.status(200).send({ articles });
+        });
+};
 
 module.exports = { getArticle, patchVotes, postComment, getArticleComments, getAllArticles };
