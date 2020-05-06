@@ -248,6 +248,33 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request')
                     });        
             });
+            test('PATCH: 400. When passed an object without a key of inc_votes returns bad request', () => {
+                return request(app)
+                    .patch('/api/articles/12')
+                    .send({ cat: 1 })
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('PATCH: 400. When passed an object witht a key of inc_votes but invalid value returns bad request', () => {
+                return request(app)
+                    .patch('/api/articles/12')
+                    .send({ inc_votes: 'cat' })
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('PATCH: 400. When passed an object witht a key of inc_votes and extra properties returns bad request', () => {
+                return request(app)
+                    .patch('/api/articles/12')
+                    .send({ inc_votes: 1, name: 'mitch' })
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request, cannot update multiple fields.');
+                    });
+            });
         });
     });
     describe('/articles/:article_id/comments', () => {

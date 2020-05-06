@@ -16,13 +16,19 @@ const fetchArticle = (id) => {
         });
 };
 
-const alterVotes = (id, newVotes) => {
+const alterVotes = (id, newVotes, num) => {
+    if (newVotes === undefined) {
+        throw { code: 'BAD REQUEST'}
+    }
+    if (num > 1) {
+        throw { code: 'TOO MANY PROPERTIES'}
+    }
     return connection('articles')
         .where('article_id', '=', id)
         .increment('votes', newVotes)
         .then(() => {
             const res = fetchArticle(id);
-            return res;
+                return res;
         })
 }
 

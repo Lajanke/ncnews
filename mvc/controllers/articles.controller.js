@@ -14,10 +14,14 @@ const getArticle = (req, res, next) => {
 const patchVotes = (req, res, next) => {
     const { article_id } = req.params;
     const { inc_votes } = req.body;
-    alterVotes(article_id, inc_votes)
+    const num = Object.keys(req.body).length;
+    alterVotes(article_id, inc_votes, num)
         .then((article) => {
             res.status(200).send({ article });
-        });
+        })
+        .catch((err) => {
+            next(err);
+        })
 };
 
 const postComment = (req, res, next) => {
