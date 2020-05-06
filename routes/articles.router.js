@@ -4,8 +4,8 @@ const { getArticle, patchVotes, getArticleComments, postComment, getAllArticles 
 const { handle405s } = require('../mvc/controllers/errors.controller.js')
 
 
-articlesRouter.route('/').get(getAllArticles);
-articlesRouter.route('/:article_id').get(getArticle).patch(patchVotes);
+articlesRouter.route('/').get(getAllArticles).all(handle405s);
+articlesRouter.route('/:article_id').get(getArticle).patch(patchVotes).all(handle405s);
 articlesRouter.route('/:article_id/comments').get(getArticleComments).post(postComment).all(handle405s);
 
 module.exports = articlesRouter;

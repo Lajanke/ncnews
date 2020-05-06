@@ -11,6 +11,14 @@ describe('/api', () => {
     afterAll(() => {
         return connection.destroy();
     });
+    test('Status 404: Misspelled path', () => {
+        return request(app)
+            .get('/api/not_a_path')
+            .expect(404)
+            .then(({body: {msg}}) => {
+                expect(msg).toBe('Path not found');
+            });
+    });
     describe('/topics', () => {
         describe('GET', () => {
             test('Status 200: Returns an array in the body with a length of 3', () => {
@@ -49,23 +57,7 @@ describe('/api', () => {
                     });
             });
         });
-        describe.only('Errors', () => {
-            test('Status 404: Misspelled path', () => {
-                return request(app)
-                    .get('/api/topis')
-                    .expect(404)
-                    .then(({body: {msg}}) => {
-                        expect(msg).toBe('Path not found');
-                    });
-            });
-            test('Status 404: Misspelled path', () => {
-                return request(app)
-                    .get('/ai/topics')
-                    .expect(404)
-                    .then(({body: {msg}}) => {
-                        expect(msg).toBe('Path not found');
-                    });
-            });
+        describe('Errors', () => {
             test('Status 405: Method not allowed', () => {
                 const invalidMethods = ['post', 'patch', 'delete',]
                 const requests = invalidMethods.map(method => {
@@ -115,6 +107,19 @@ describe('/api', () => {
                         expect(res.body.user[0].avatar_url).toBe('https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png');
                         expect(res.body.user[0].name).toBe('do_nothing');
                     });
+            });
+        });
+        describe('errors', () => {
+            test('Status 405: Method not allowed', () => {
+                const invalidMethods = ['post', 'patch', 'delete',]
+                const requests = invalidMethods.map(method => {
+                  return request(app)[method]('/api/users/butter_bridge')
+                  .expect(405)
+                  .then((res) => {
+                    expect(res.body.msg).toBe('Method not allowed')
+                  })
+                })
+                return Promise.all(requests);
             });
         });
     });
@@ -207,6 +212,19 @@ describe('/api', () => {
                     });
             });
         });
+        describe('errors', () => {
+            test('Status 405: Method not allowed', () => {
+                const invalidMethods = ['post','delete',]
+                const requests = invalidMethods.map(method => {
+                  return request(app)[method]('/api/articles/1')
+                  .expect(405)
+                  .then((res) => {
+                    expect(res.body.msg).toBe('Method not allowed')
+                  })
+                })
+                return Promise.all(requests);
+            });
+        });
     });
     describe('/articles/:article_id/comments', () => {
         describe('POST', () => {
@@ -287,6 +305,19 @@ describe('/api', () => {
                             expect(res.body.comments).toBeSortedBy('votes');
                         });
                 });
+            });
+        });
+        describe('errors', () => {
+            test('Status 405: Method not allowed', () => {
+                const invalidMethods = ['patch','delete',]
+                const requests = invalidMethods.map(method => {
+                  return request(app)[method]('/api/articles/1/comments')
+                  .expect(405)
+                  .then((res) => {
+                    expect(res.body.msg).toBe('Method not allowed')
+                  })
+                })
+                return Promise.all(requests);
             });
         });
     });
@@ -378,6 +409,19 @@ describe('/api', () => {
                 });
             })
         });
+        describe('errors', () => {
+            test('Status 405: Method not allowed', () => {
+                const invalidMethods = ['post', 'patch', 'delete',]
+                const requests = invalidMethods.map(method => {
+                  return request(app)[method]('/api/articles')
+                  .expect(405)
+                  .then((res) => {
+                    expect(res.body.msg).toBe('Method not allowed')
+                  })
+                })
+                return Promise.all(requests);
+            });
+        });
     });
     describe('/comments/:comment_id', () => {
         describe('PATCH', () => {
@@ -431,6 +475,19 @@ describe('/api', () => {
                                 expect(res.body.comments.length).toBe(12);
                             });
                     });
+            });
+        });
+        describe('errors', () => {
+            test('Status 405: Method not allowed', () => {
+                const invalidMethods = ['get', 'post',]
+                const requests = invalidMethods.map(method => {
+                  return request(app)[method]('/api/comments/:comment_id')
+                  .expect(405)
+                  .then((res) => {
+                    expect(res.body.msg).toBe('Method not allowed')
+                  })
+                })
+                return Promise.all(requests);
             });
         });
     });
