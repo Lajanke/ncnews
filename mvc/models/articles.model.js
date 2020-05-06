@@ -42,12 +42,13 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
         });
 };
 
-const fetchAllArticles = () => {
+const fetchAllArticles = (sort_by = 'created_at', order = 'desc') => {
     return connection('articles')
         .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
         .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes')
         .count('comments.article_id as comment_count')
         .groupBy('articles.article_id')
+        .orderBy(sort_by, order)
         .then((res) => {
             return res;
         });

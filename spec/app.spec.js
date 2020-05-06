@@ -282,11 +282,49 @@ describe('/api', () => {
                         expect(article).toHaveProperty('votes');
                         expect(article).toHaveProperty('comment_count');
                         expect(Object.keys(article).length).toBe(7);
-                    })
-                })
+                    });
+                });
+            });
+            test('Status 200: Defaults to be sorted by created_at in descending order', () => {
+                return request(app)
+                .get('/api/articles')
+                .expect(200)
+                .then((res) => {
+                    expect(res.body.articles).toBeSortedBy('created_at', {
+                        descending: true
+                    });
+                });
+            });
+            describe('queries', () => {
+                test('Queries: Accepts an order query to change to ascending', () => {
+                    return request(app)
+                        .get('/api/articles?order=asc')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.articles).toBeSortedBy('created_at');
+                        });
+                });
+                test('Queries: Accepts a sort_by query', () => {
+                    return request(app)
+                        .get('/api/articles?sort_by=votes')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.articles).toBeSortedBy('votes', {
+                                descending: true,
+                            });
+                        });
+                });
+                test('Queries: Accepts a sort_by and order in one url request', () => {
+                    return request(app)
+                        .get('/api/articles?sort_by=votes&order=asc')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.articles).toBeSortedBy('votes');
+                        });
+                });
             })
-        })
-    })
+        });
+    });
 });
 
 /*
