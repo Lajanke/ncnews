@@ -6,7 +6,6 @@ const patchVotesById = (id, newVotes) => {
         .increment('votes', newVotes)
         .returning('*')
         .then((res) => {
-            console.log(res, 'in model')
             return res;
         });
 };

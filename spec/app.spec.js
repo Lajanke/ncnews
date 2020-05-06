@@ -351,11 +351,29 @@ describe('/api', () => {
         describe('PATCH', () => {
             test('Status: 200. Only 1 comment returned in response', () => {
                 return request(app)
-                    .patch('/api/comments/1') // current votes 16
+                    .patch('/api/comments/1')
                     .send({ inc_votes: 1 })
                     .expect(200)
                     .then((res) => {
                         expect(res.body.comment.length).toBe(1);
+                    });
+            });
+            test('Status: 200. Increases votes when passed positive integer', () => {
+                return request(app)
+                    .patch('/api/comments/1')
+                    .send({ inc_votes: 3 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comment[0].votes).toBe(19);
+                    });
+            });
+            test('Status: 200. decreases votes when passed negative integer', () => {
+                return request(app)
+                    .patch('/api/comments/1')
+                    .send({ inc_votes: -5 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comment[0].votes).toBe(11);
                     });
             });
         });
