@@ -232,6 +232,14 @@ describe('/api', () => {
                 })
                 return Promise.all(requests);
             });
+            test.only('GET: Status 404: Article does not exist', () => {
+                return request(app)
+                    .get('/api/articles/200')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('No article with this ID found')
+                    });        
+            });
         });
     });
     describe('/articles/:article_id/comments', () => {

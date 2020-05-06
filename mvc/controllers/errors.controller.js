@@ -7,7 +7,8 @@ const handle405s = (req, res) => {
 }
 
 const handleErrors = (err, req, res, next) => {
-    const codes =   { 'USER NOT FOUND': {status: 404, msg: 'User does not exist' }, }
+    const codes =   {   'USER NOT FOUND': {status: 404, msg: 'User does not exist' },
+                        'ARTICLE NOT FOUND': {status: 404, msg: 'No article with this ID found'}, }
     if ((Object.keys(codes)).includes(err.code)) {
         const { status, msg } = codes[err.code];
         res.status(status).send({msg});

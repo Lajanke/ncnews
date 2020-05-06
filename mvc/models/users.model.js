@@ -5,8 +5,11 @@ const fetchUser = (username) => {
     .select('*')
     .where('users.username', '=', username)
     .then((result) => {
-        if (result.length === 0) {throw {code: 'USER NOT FOUND'}}
-        return result;
+        if (result.length === 0) {
+            throw {code: 'USER NOT FOUND'};
+        } else {
+            return result;
+        }
     });
 };
 

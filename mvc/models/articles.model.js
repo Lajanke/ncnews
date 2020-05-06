@@ -8,6 +8,9 @@ const fetchArticle = (id) => {
         .groupBy('articles.article_id')
         .where('articles.article_id', '=', id)
         .then((res) => {
+            if (res.length === 0) {
+                throw { code: 'ARTICLE NOT FOUND'}
+            }
             return res;
         });
 };
