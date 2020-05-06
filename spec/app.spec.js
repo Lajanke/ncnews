@@ -248,6 +248,24 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request')
                     });        
             });
+            test('PATCH: Status 404: Article id does not exist', () => {
+                return request(app)
+                    .patch('/api/articles/200')
+                    .send({inc_votes: 1})
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('No article with this ID found')
+                    });        
+            });
+            test('PATCH: Status 400: Article id is invalid', () => {
+                return request(app)
+                    .patch('/api/articles/not_a_real_id')
+                    .send({inc_votes: 1})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request')
+                    });        
+            });
             test('PATCH: 400. When passed an object without a key of inc_votes returns bad request', () => {
                 return request(app)
                     .patch('/api/articles/12')
@@ -257,7 +275,7 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request');
                     });
             });
-            test('PATCH: 400. When passed an object witht a key of inc_votes but invalid value returns bad request', () => {
+            test('PATCH: 400. When passed an object with a key of inc_votes but invalid value returns bad request', () => {
                 return request(app)
                     .patch('/api/articles/12')
                     .send({ inc_votes: 'cat' })
@@ -277,7 +295,7 @@ describe('/api', () => {
             });
         });
     });
-    describe('/articles/:article_id/comments', () => {
+    describe('/articles/:article_id/comments', () => { //NEED TO ADD QUERY ERROR HANDLING
         describe('POST', () => {
             test('status 201, posts comment to article', () => {
                 return request(app)
@@ -293,7 +311,6 @@ describe('/api', () => {
                             });
                     });
             });
-
         });
         describe('GET', () => {
             test('status 201: Returns all comments for a given article id', () => {
@@ -370,9 +387,88 @@ describe('/api', () => {
                 })
                 return Promise.all(requests);
             });
+            test('GET: status 404: Article id does not exist', () => {
+                return request(app)
+                    .get('/api/articles/200/comments')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('No article with this ID found');
+                    });
+            });
+            test('GET: status 400: Bad request, invalid article id', () => {
+                return request(app)
+                    .get('/api/articles/not_a_real_id/comments')
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('POST: status 404: Article id does not exist', () => {
+                return request(app)
+                    .post('/api/articles/200/comments')
+                    .send({ username: 'lurker', body: 'I have posted.' })
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Not found');
+                    });
+            });
+            test('POST: status 400: Invalid article id', () => {
+                return request(app)
+                    .post('/api/articles/cat/comments')
+                    .send({ username: 'lurker', body: 'I have posted.' })
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('POST: 404. When passed a username that does not exist returns not found', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'luke', body: 'I am luke'})
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Not found');
+                    });
+            });
+            test('POST: 400. When passed an object without username key returns bad request', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ body: 'I am not luke'})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('POST: 400. When passed an object without body key returns bad request', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'lurker'})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('POST: 400. When passed an object with body of empty string returns a custom message', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'lurker', body: ''})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Comment cannot be empty');
+                    });
+            });
+            test('POST: 400. When passed nothing returns bad request', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
         });
     });
-    describe('/articles', () => {
+    describe('/articles', () => { //ERROR HANDLING NEEDED
         describe('GET', () => {
             test('Status 200: When requesting all articles responds with all', () => {
                 return request(app)
@@ -474,7 +570,7 @@ describe('/api', () => {
             });
         });
     });
-    describe('/comments/:comment_id', () => {
+    describe('/comments/:comment_id', () => {//ERROR HANDLING NEEDED
         describe('PATCH', () => {
             test('Status: 200. Only 1 comment returned in response', () => {
                 return request(app)

@@ -29,10 +29,13 @@ const alterVotes = (id, newVotes, num) => {
         .then(() => {
             const res = fetchArticle(id);
                 return res;
-        })
-}
+        });
+};
 
 const postNewComment = (id, username, body) => {
+    if (body === '') {
+        throw { code: 'NO BODY' }
+    }
     const newComment = { article_id: id, author: username, body: body };
     return connection('comments')
         .insert(newComment)
@@ -40,7 +43,7 @@ const postNewComment = (id, username, body) => {
         .then((res) => {
             return res[0].body;
         });
-}
+};
 
 const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
     return connection('comments')
@@ -48,7 +51,11 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
         .select('comment_id', 'author', 'votes', 'created_at', 'body')
         .orderBy(sort_by, order)
         .then((res) => {
-            return res;
+            if (res.length === 0) {
+                throw { code: 'ARTICLE NOT FOUND'}
+            } else {
+                return res;
+            }
         });
 };
 
@@ -66,6 +73,6 @@ const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic
         .then((res) => {
             return res;
         });
-}
+};
 
 module.exports = { fetchArticle, alterVotes, postNewComment, fetchArticleComments, fetchAllArticles }
