@@ -67,12 +67,15 @@ describe('/api', () => {
                     });
             });
             test('Status 405: Method not allowed', () => {
-                return request(app)
-                    .post('/api/topics')
-                    .expect(405)
-                    .then(({body: {msg}}) => {
-                        expect(msg).toBe('Method not allowed');
-                    });
+                const invalidMethods = ['post', 'patch', 'delete',]
+                const requests = invalidMethods.map(method => {
+                  return request(app)[method]('/api/topics')
+                  .expect(405)
+                  .then((res) => {
+                    expect(res.body.msg).toBe('Method not allowed')
+                  })
+                })
+                return Promise.all(requests);
             });
         });
     });
