@@ -5,6 +5,9 @@ const getUsers = (req, res, next) => {
     fetchUser(username)
     .then((user) => {
         res.status(200).send({ user });
+    })
+    .catch((err) => {
+        next(err)
     }) 
 }
 

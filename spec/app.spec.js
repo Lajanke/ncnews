@@ -121,6 +121,14 @@ describe('/api', () => {
                 })
                 return Promise.all(requests);
             });
+            test('Status 404: User does not exist', () => {
+                return request(app)
+                    .get('/api/users/not_a_real_user')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('User does not exist')
+                    });        
+            });
         });
     });
     describe('/articles/:article_id', () => {
