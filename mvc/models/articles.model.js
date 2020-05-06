@@ -42,13 +42,19 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
         });
 };
 
-const fetchAllArticles = (sort_by = 'created_at', order = 'desc') => {
+const fetchAllArticles = (
+    sort_by = 'created_at', 
+    order = 'desc',
+    author ) => {
     return connection('articles')
         .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
         .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes')
         .count('comments.article_id as comment_count')
         .groupBy('articles.article_id')
         .orderBy(sort_by, order)
+        .modify( query => {
+            if(author) query.where('articles.author', '=', author)
+        })
         .then((res) => {
             return res;
         });

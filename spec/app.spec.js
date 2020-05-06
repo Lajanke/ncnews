@@ -262,38 +262,38 @@ describe('/api', () => {
         describe('GET', () => {
             test('Status 200: When requesting all articles responds with all', () => {
                 return request(app)
-                .get('/api/articles')
-                .expect(200)
-                .then((res) => {
-                    expect(res.body.articles.length).toBe(12);
-                })
+                    .get('/api/articles')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.articles.length).toBe(12);
+                    })
             })
             test('Status 200: All articles have certain keys and no more', () => {
                 return request(app)
-                .get('/api/articles')
-                .expect(200)
-                .then((res) => {
-                    res.body.articles.forEach(article => {
-                        expect(article).toHaveProperty('author');
-                        expect(article).toHaveProperty('title');
-                        expect(article).toHaveProperty('article_id');
-                        expect(article).toHaveProperty('topic');
-                        expect(article).toHaveProperty('created_at');
-                        expect(article).toHaveProperty('votes');
-                        expect(article).toHaveProperty('comment_count');
-                        expect(Object.keys(article).length).toBe(7);
+                    .get('/api/articles')
+                    .expect(200)
+                    .then((res) => {
+                        res.body.articles.forEach(article => {
+                            expect(article).toHaveProperty('author');
+                            expect(article).toHaveProperty('title');
+                            expect(article).toHaveProperty('article_id');
+                            expect(article).toHaveProperty('topic');
+                            expect(article).toHaveProperty('created_at');
+                            expect(article).toHaveProperty('votes');
+                            expect(article).toHaveProperty('comment_count');
+                            expect(Object.keys(article).length).toBe(7);
+                        });
                     });
-                });
             });
             test('Status 200: Defaults to be sorted by created_at in descending order', () => {
                 return request(app)
-                .get('/api/articles')
-                .expect(200)
-                .then((res) => {
-                    expect(res.body.articles).toBeSortedBy('created_at', {
-                        descending: true
+                    .get('/api/articles')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.articles).toBeSortedBy('created_at', {
+                            descending: true
+                        });
                     });
-                });
             });
             describe('queries', () => {
                 test('Queries: Accepts an order query to change to ascending', () => {
@@ -320,6 +320,17 @@ describe('/api', () => {
                         .expect(200)
                         .then((res) => {
                             expect(res.body.articles).toBeSortedBy('votes');
+                        });
+                });
+                test('Queries: Accepts an author query and then filters for the matching username', () => {
+                    return request(app)
+                        .get('/api/articles?author=butter_bridge')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.articles.length).toBe(3);
+                            res.body.articles.forEach(article => {
+                                expect(article.author).toBe('butter_bridge');
+                            })
                         });
                 });
             })
