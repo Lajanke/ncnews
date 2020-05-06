@@ -49,6 +49,32 @@ describe('/api', () => {
                     });
             });
         });
+        describe.only('Errors', () => {
+            test('Status 404: Misspelled path', () => {
+                return request(app)
+                    .get('/api/topis')
+                    .expect(404)
+                    .then(({body: {msg}}) => {
+                        expect(msg).toBe('Path not found');
+                    });
+            });
+            test('Status 404: Misspelled path', () => {
+                return request(app)
+                    .get('/ai/topics')
+                    .expect(404)
+                    .then(({body: {msg}}) => {
+                        expect(msg).toBe('Path not found');
+                    });
+            });
+            test('Status 405: Method not allowed', () => {
+                return request(app)
+                    .post('/api/topics')
+                    .expect(405)
+                    .then(({body: {msg}}) => {
+                        expect(msg).toBe('Method not allowed');
+                    });
+            });
+        });
     });
     describe('/users/:username', () => {
         describe('GET', () => {
@@ -187,7 +213,7 @@ describe('/api', () => {
                     .send({ username: 'lurker', body: 'I have posted.' })
                     .expect(201)
                     .then((res) => {
-                        expect(res.body.comment[0]).toBe('I have posted.');
+                        expect(res.body.comment).toBe('I have posted.');
                         return request(app)
                             .get('/api/articles/1')
                             .then((res) => {
@@ -406,5 +432,3 @@ describe('/api', () => {
         });
     });
 });
-
-

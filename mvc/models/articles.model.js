@@ -28,7 +28,7 @@ const postNewComment = (id, username, body) => {
         .insert(newComment)
         .returning('*')
         .then((res) => {
-            return [res[0].body];
+            return res[0].body;
         });
 }
 
