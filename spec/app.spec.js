@@ -347,7 +347,7 @@ describe('/api', () => {
             })
         });
     });
-    describe.only('/comments/:comment_id', () => {
+    describe('/comments/:comment_id', () => {
         describe('PATCH', () => {
             test('Status: 200. Only 1 comment returned in response', () => {
                 return request(app)
@@ -376,6 +376,32 @@ describe('/api', () => {
                         expect(res.body.comment[0].votes).toBe(11);
                     });
             });
+            test('Status: 200. Works for different ids', () => {
+                return request(app)
+                    .patch('/api/comments/3')
+                    .send({ inc_votes: -5 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comment[0].votes).toBe(95);
+                    });
+            });
+        });
+        describe('DELETE', () => {
+            test('Deletes comment with matching id', () => {
+                return request(app)
+                .del('/api/comments/2')
+                .expect(204)
+                .then(() => {
+                    return request(app)
+                        .get('/api/articles/1/comments')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.comments.length).toBe(12);
+                        });
+                });
+            });
         });
     });
 });
+
+

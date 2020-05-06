@@ -10,4 +10,13 @@ const patchVotesById = (id, newVotes) => {
         });
 };
 
-module.exports = { patchVotesById }
+const deleteCommentById = (id) => {
+    return connection('comments')
+        .where('comment_id', '=', id)
+        .del()
+        .then((delCount) => {
+            return delCount;
+        });
+};
+
+module.exports = { patchVotesById, deleteCommentById }
