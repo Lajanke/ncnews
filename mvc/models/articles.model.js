@@ -2,14 +2,14 @@ const connection = require('../../connection.js');
 
 const fetchArticle = (id) => {
     return connection('articles')
-    .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
-    .select('articles.*')
-    .count('comments.article_id as comment_count')
-    .groupBy('articles.article_id')
-    .where('articles.article_id', '=', id)
-    .then((res) => {
-        return res;
-    });
+        .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
+        .select('articles.*')
+        .count('comments.article_id as comment_count')
+        .groupBy('articles.article_id')
+        .where('articles.article_id', '=', id)
+        .then((res) => {
+            return res;
+        });
 };
 
 const alterVotes = (id, newVotes) => {
@@ -32,10 +32,11 @@ const postNewComment = (id, username, body) => {
         });
 }
 
-const fetchArticleComments = (id) => {
+const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
     return connection('comments')
         .where('article_id', '=', id)
-        .select('comment_id', 'author', 'votes', 'created_at', 'body',)
+        .select('comment_id', 'author', 'votes', 'created_at', 'body')
+        .orderBy(sort_by, order)
         .then((res) => {
             return res;
         });

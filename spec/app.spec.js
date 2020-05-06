@@ -196,7 +196,7 @@ describe('/api', () => {
                             });
                     });
             });
-            describe('GET', () => {
+            describe.only('GET', () => {
                 test('status 201: Returns all comments for a given article id', () => {
                     return request(app)
                         .get('/api/articles/1/comments')
@@ -218,6 +218,42 @@ describe('/api', () => {
                                 expect(comment).toHaveProperty('body');
                                 expect(Object.keys(comment).length).toBe(5);
                             });
+                        });
+                });
+                test('Defaults to be sorted by created_at in descending order', () => {
+                    return request(app)
+                        .get('/api/articles/1/comments')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.comments).toBeSortedBy('created_at', {
+                                descending: true,
+                            });
+                        });
+                });
+                test('Queries: Accepts an order query to change to ascending', () => {
+                    return request(app)
+                        .get('/api/articles/1/comments?order=asc')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.comments).toBeSortedBy('created_at');
+                        });
+                });
+                test('Queries: Accepts a sort_by query', () => {
+                    return request(app)
+                        .get('/api/articles/1/comments?sort_by=votes')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.comments).toBeSortedBy('votes', {
+                                descending: true,
+                            });
+                        });
+                });
+                test('Queries: Accepts a sort_by and order in one url request', () => {
+                    return request(app)
+                        .get('/api/articles/1/comments?sort_by=votes&order=asc')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.comments).toBeSortedBy('votes');
                         });
                 });
             });
