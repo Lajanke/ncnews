@@ -10,8 +10,9 @@ const fetchArticle = (id) => {
         .then((res) => {
             if (res.length === 0) {
                 throw { code: 'ARTICLE NOT FOUND'}
-            }
+            } else {
             return res;
+            }
         });
 };
 

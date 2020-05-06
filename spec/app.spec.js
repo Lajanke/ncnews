@@ -232,12 +232,20 @@ describe('/api', () => {
                 })
                 return Promise.all(requests);
             });
-            test.only('GET: Status 404: Article does not exist', () => {
+            test('GET: Status 404: Article does not exist', () => {
                 return request(app)
                     .get('/api/articles/200')
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toBe('No article with this ID found')
+                    });        
+            });
+            test('GET: Status 400: Invalid article id', () => {
+                return request(app)
+                    .get('/api/articles/an_article')
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request')
                     });        
             });
         });
