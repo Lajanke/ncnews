@@ -37,10 +37,9 @@ const getArticleComments = (req, res, next) => {
 };
 
 const getAllArticles = (req, res, next) => {
-    const { sort_by, order, author } = req.query
-    fetchAllArticles(sort_by, order, author)
+    const { sort_by, order, author, topic } = req.query
+    fetchAllArticles(sort_by, order, author, topic)
     .then((articles) => {
-        console.log(articles)
         res.status(200).send({ articles })
     })
 }

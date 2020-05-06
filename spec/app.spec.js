@@ -333,6 +333,17 @@ describe('/api', () => {
                             })
                         });
                 });
+                test('Queries: Accepts an author query and then filters for the matching username', () => {
+                    return request(app)
+                        .get('/api/articles?topic=mitch')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.articles.length).toBe(11);
+                            res.body.articles.forEach(article => {
+                                expect(article.topic).toBe('mitch');
+                            })
+                        });
+                });
             })
         });
     });
