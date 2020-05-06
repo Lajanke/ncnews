@@ -258,7 +258,7 @@ describe('/api', () => {
             });
         });
     });
-    describe.only('/articles', () => {
+    describe('/articles', () => {
         describe('GET', () => {
             test('Status 200: When requesting all articles responds with all', () => {
                 return request(app)
@@ -347,11 +347,17 @@ describe('/api', () => {
             })
         });
     });
+    describe.only('/comments/:comment_id', () => {
+        describe('PATCH', () => {
+            test('Status: 200. Only 1 comment returned in response', () => {
+                return request(app)
+                    .patch('/api/comments/1') // current votes 16
+                    .send({ inc_votes: 1 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comment.length).toBe(1);
+                    });
+            });
+        });
+    });
 });
-
-/*
-sort_by, which sorts the articles by any valid column (defaults to date)
-order, which can be set to asc or desc for ascending or descending (defaults to descending)
-author, which filters the articles by the username value specified in the query
-topic, which filters the articles by the topic value specified in the query
-*/
