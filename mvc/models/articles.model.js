@@ -17,9 +17,6 @@ const fetchArticle = (id) => {
 };
 
 const alterVotes = (id, newVotes = 0, num) => {
-    /*if (newVotes === undefined) {
-        throw { code: 'BAD REQUEST'};
-    };*/
     if (num > 1) {
         throw { code: 'TOO MANY PROPERTIES'};
     };
@@ -58,7 +55,15 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
         .orderBy(sort_by, order)
         .then((res) => {
             if (res.length === 0) {
-                throw { code: 'ARTICLE NOT FOUND'}
+               return connection('articles')
+               .where('article_id', '=', id)
+               .then((result) => {
+                   if (result.length === 0) {
+                    throw { code: 'ARTICLE NOT FOUND'}
+                   } else { 
+                       return res
+                    }
+               })    
             } else {
                 return res;
             }

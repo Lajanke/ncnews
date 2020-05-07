@@ -288,7 +288,7 @@ describe('/api', () => {
             });
         });
     });
-    describe('/articles/:article_id/comments', () => { //NEED TO ADD QUERY ERROR HANDLING
+    describe('/articles/:article_id/comments', () => {
         describe('POST', () => {
             test('status 201, posts comment to article', () => {
                 return request(app)
@@ -306,7 +306,7 @@ describe('/api', () => {
             });
         });
         describe('GET', () => {
-            test('status 201: Returns all comments for a given article id', () => {
+            test('status 200: Returns all comments for a given article id', () => {
                 return request(app)
                     .get('/api/articles/1/comments')
                     .expect(200)
@@ -314,7 +314,7 @@ describe('/api', () => {
                         expect(res.body.comments.length).toBe(13);
                     });
             });
-            test('status 201: Each comment has certain keys. And only 5 keys.', () => {
+            test('status 200: Each comment has certain keys. And only 5 keys.', () => {
                 return request(app)
                     .get('/api/articles/1/comments')
                     .expect(200)
@@ -337,6 +337,14 @@ describe('/api', () => {
                         expect(res.body.comments).toBeSortedBy('created_at', {
                             descending: true,
                         });
+                    });
+            });
+            test('Returns empty array if article exists but has no comments', () => {
+                return request(app)
+                    .get('/api/articles/2/comments')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comments).toEqual([]);
                     });
             });
             describe('queries', () => {
@@ -621,7 +629,7 @@ describe('/api', () => {
                 });
         });
     });
-    describe('/comments/:comment_id', () => {//ERROR HANDLING NEEDED
+    describe('/comments/:comment_id', () => {
         describe('PATCH', () => {
             test('Status: 200. Only 1 comment returned in response', () => {
                 return request(app)
