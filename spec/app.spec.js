@@ -26,6 +26,7 @@ describe('/api', () => {
                     .get('/api/topics')
                     .expect(200)
                     .then((res) => {
+                        console.log(res.body)
                         expect(res.body.topics.length).toBe(3);
                     });
             });
@@ -133,27 +134,19 @@ describe('/api', () => {
     });
     describe('/articles/:article_id', () => {
         describe('GET', () => {
-            test('Status 200: Only one article returned. Returns array in the body with a length of 1', () => {
+            test('Status 200: Returned article has certain properties', () => {
                 return request(app)
                     .get('/api/articles/1')
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.article.length).toBe(1);
-                    });
-            });
-            test('Returned article has certain properties', () => {
-                return request(app)
-                    .get('/api/articles/1')
-                    .expect(200)
-                    .then((res) => {
-                        expect(res.body.article[0]).toHaveProperty('author');
-                        expect(res.body.article[0]).toHaveProperty('title');
-                        expect(res.body.article[0]).toHaveProperty('article_id');
-                        expect(res.body.article[0]).toHaveProperty('topic');
-                        expect(res.body.article[0]).toHaveProperty('created_at');
-                        expect(res.body.article[0]).toHaveProperty('votes');
-                        expect(res.body.article[0]).toHaveProperty('comment_count');
-                        expect(res.body.article[0].comment_count).toEqual('13');
+                        expect(res.body.article).toHaveProperty('author');
+                        expect(res.body.article).toHaveProperty('title');
+                        expect(res.body.article).toHaveProperty('article_id');
+                        expect(res.body.article).toHaveProperty('topic');
+                        expect(res.body.article).toHaveProperty('created_at');
+                        expect(res.body.article).toHaveProperty('votes');
+                        expect(res.body.article).toHaveProperty('comment_count');
+                        expect(res.body.article.comment_count).toEqual('13');
                     });
             });
             test('Returned article does not return more columns/properties than it should.', () => {
@@ -161,7 +154,7 @@ describe('/api', () => {
                     .get('/api/articles/1')
                     .expect(200)
                     .then((res) => {
-                        expect(Object.keys(res.body.article[0]).length).toBe(8);
+                        expect(Object.keys(res.body.article).length).toBe(8);
                     });
             });
             test('Works for an article with 0 comments', () => {
@@ -169,7 +162,7 @@ describe('/api', () => {
                     .get('/api/articles/12')
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.article).toEqual([{
+                        expect(res.body.article).toEqual({
                             article_id: 12,
                             title: 'Moustache',
                             body: 'Have you seen the size of that thing?',
@@ -178,27 +171,18 @@ describe('/api', () => {
                             author: 'butter_bridge',
                             created_at: '1974-11-26T12:21:54.171Z',
                             comment_count: '0'
-                        }]);
+                        });
                     });
             });
         });
         describe('PATCH', () => {
-            test('Status: 200. Only 1 article returned in response', () => {
-                return request(app)
-                    .patch('/api/articles/12')
-                    .send({ inc_votes: 1 })
-                    .expect(200)
-                    .then((res) => {
-                        expect(res.body.article.length).toBe(1);
-                    });
-            });
             test('Status: 200. Increases votes when passed positive integer', () => {
                 return request(app)
                     .patch('/api/articles/12')
                     .send({ inc_votes: 1 })
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.article[0].votes).toBe(1);
+                        expect(res.body.article.votes).toBe(1);
                     });
             });
             test('Status: 200. decreases votes when passed negative integer', () => {
@@ -207,7 +191,7 @@ describe('/api', () => {
                     .send({ inc_votes: -50 })
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.article[0].votes).toBe(50);
+                        expect(res.body.article.votes).toBe(50);
                     });
             });
             test('Status: 200. Returns article in the same format as get request', () => {
@@ -216,8 +200,26 @@ describe('/api', () => {
                     .send({ inc_votes: -50 })
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.article[0]).toHaveProperty('comment_count');
+                        expect(res.body.article).toHaveProperty('comment_count');
                     });
+            });
+            test('Status: 200. When passed nothing in the req body returns unchanged article', () => {
+                return request(app)
+                    .patch('/api/articles/12')
+                    .send()
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article.votes).toBe(0);
+                    });
+            });
+            test('Status 200. When passed an object without a key of inc_votes returns the article unchanged', () => {
+                return request(app)
+                .patch('/api/articles/12')
+                .send()
+                .expect(200)
+                .then((res) => {
+                    expect(res.body.article.votes).toBe(0);
+                });
             });
         });
         describe('errors', () => {
@@ -266,15 +268,6 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request')
                     });        
             });
-            test('PATCH: 400. When passed an object without a key of inc_votes returns bad request', () => {
-                return request(app)
-                    .patch('/api/articles/12')
-                    .send({ cat: 1 })
-                    .expect(400)
-                    .then((res) => {
-                        expect(res.body.msg).toBe('Bad request');
-                    });
-            });
             test('PATCH: 400. When passed an object with a key of inc_votes but invalid value returns bad request', () => {
                 return request(app)
                     .patch('/api/articles/12')
@@ -307,7 +300,7 @@ describe('/api', () => {
                         return request(app)
                             .get('/api/articles/1')
                             .then((res) => {
-                                expect(res.body.article[0].comment_count).toBe('14');
+                                expect(res.body.article.comment_count).toBe('14');
                             });
                     });
             });

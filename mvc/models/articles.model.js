@@ -11,15 +11,15 @@ const fetchArticle = (id) => {
             if (res.length === 0) {
                 throw { code: 'ARTICLE NOT FOUND'}
             } else {
-            return res;
+            return res[0];
             }
         });
 };
 
-const alterVotes = (id, newVotes, num) => {
-    if (newVotes === undefined) {
+const alterVotes = (id, newVotes = 0, num) => {
+    /*if (newVotes === undefined) {
         throw { code: 'BAD REQUEST'};
-    };
+    };*/
     if (num > 1) {
         throw { code: 'TOO MANY PROPERTIES'};
     };
