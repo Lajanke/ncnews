@@ -2,26 +2,135 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
+  "GET /api/users/:username": {
+    "description": "serves up an object of the user with the given username",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "weegembump",
+        "avatar_url": "URL",
+        "name": "Colin"
+      }
+    }
+  },
   "GET /api/topics": {
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        {
+          "slug": "football",
+          "description": "Footie!"
+        }
+      ]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles",
+    "queries": [
+      "author",
+      "topic",
+      "sort_by",
+      "order"
+    ],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
           "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "title": "Seafood substitutions are increasing",
+          "article_id": 25,
+          "topic": "cooking",
+          "created_at": 1527695953341,
+          "votes": 25,
+          "comment_count": 25
         }
       ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an object of the article with a matching id",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "author": "weegembump",
+        "title": "Seafood substitutions are increasing",
+        "article_id": "A number",
+        "body": "Text from the article..",
+        "topic": "cooking",
+        "created_at": 1527695953341,
+        "votes": 25,
+        "comment_count": 25
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Takes a request. Updates the number of votes for a specific article. Serves the article in an object",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "author": "weegembump",
+        "title": "Seafood substitutions are increasing",
+        "article_id": "A number",
+        "body": "Text from the article..",
+        "topic": "cooking",
+        "created_at": 1527695953341,
+        "votes": 25,
+        "comment_count": 25
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "Serves an array of comments for the given article id",
+    "queries": [
+      "sort_by",
+      "order"
+    ],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 25,
+          "votes": 25,
+          "created_at": 1527695953341,
+          "author": "weegembump",
+          "body": "Comment text",
+          "topic": "cooking"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Takes a request. Creates a new comment on the given article id. Serves up the newly created comment",
+    "queries": [],
+    "exampleResponse": {
+      "comments": {
+        "comment_id": 26,
+        "votes": 0,
+        "created_at": 1527695953348,
+        "author": "weegembump",
+        "body": "Comment text",
+        "topic": "cooking"
+      }
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Takes a request. Updates the number of votes for the comment with the given id. Serves up the edited comment in an object",
+    "queries": [],
+    "exampleResponse": {
+      "comments": {
+        "comment_id": 26,
+        "votes": 1,
+        "created_at": 1527695953348,
+        "author": "weegembump",
+        "body": "Comment text",
+        "topic": "cooking"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a comment with the given id",
+    "queries": [],
+    "exampleResponse": {
+      "msg": "No content"
     }
   }
 }
