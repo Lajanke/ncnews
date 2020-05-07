@@ -1,9 +1,6 @@
 const connection = require('../../connection.js');
 
-const patchVotesById = (id, newVotes, num) => {
-    if (newVotes === undefined) {
-        throw { code: 'BAD REQUEST'};
-    };
+const patchVotesById = (id, newVotes = 0, num) => {
     if (num > 1) {
         throw { code: 'TOO MANY PROPERTIES'};
     };

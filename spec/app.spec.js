@@ -19,6 +19,17 @@ describe('/api', () => {
                 expect(msg).toBe('Path not found');
             });
     });
+    test('Status 405: Method not allowed', () => {
+        const invalidMethods = ['post', 'patch', 'delete']
+        const requests = invalidMethods.map(method => {
+          return request(app)[method]('/api')
+          .expect(405)
+          .then((res) => {
+            expect(res.body.msg).toBe('Method not allowed')
+          })
+        })
+        return Promise.all(requests);
+    });
     describe('/topics', () => {
         describe('GET', () => {
             test('Status 200: Returns an array in the body with a length of 3', () => {
@@ -26,7 +37,7 @@ describe('/api', () => {
                     .get('/api/topics')
                     .expect(200)
                     .then((res) => {
-                        console.log(res.body)
+                        console.log(res.body)  /////////////////////////////////
                         expect(res.body.topics.length).toBe(3);
                     });
             });
@@ -670,6 +681,15 @@ describe('/api', () => {
                         expect(res.body.comment.votes).toBe(95);
                     });
             });
+            test('PATCH: 200. When passed an object without a key of inc_votes returns the comment unchanged', () => {
+                return request(app)
+                    .patch('/api/comments/1')
+                    .send({ cat: 1 })
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comment.votes).toBe(16);
+                    });
+            });
         });
         describe('DELETE', () => {
             test('Deletes comment with matching id', () => {
@@ -698,8 +718,6 @@ describe('/api', () => {
                 })
                 return Promise.all(requests);
             });
-
-
             test('PATCH: Status 404: Comment id does not exist', () => {
                 return request(app)
                     .patch('/api/comments/200')
@@ -717,15 +735,6 @@ describe('/api', () => {
                     .then((res) => {
                         expect(res.body.msg).toBe('Bad request')
                     });        
-            });
-            test('PATCH: 400. When passed an object without a key of inc_votes returns bad request', () => {
-                return request(app)
-                    .patch('/api/comments/1')
-                    .send({ cat: 1 })
-                    .expect(400)
-                    .then((res) => {
-                        expect(res.body.msg).toBe('Bad request');
-                    });
             });
             test('PATCH: 400. When passed an object with a key of inc_votes but invalid value returns bad request', () => {
                 return request(app)

@@ -38,6 +38,7 @@ const handlePSQLErrors = (err, req, res, next) => {
 
 const handleUnknownErrors = (err, req, res, next) => {
     console.log(err)
+    res.status(500).seng({ msg: 'Internal server error'})
 }
 
 module.exports = { handle404s, handle405s, handleErrors, handlePSQLErrors, handleUnknownErrors }
