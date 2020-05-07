@@ -11,8 +11,9 @@ const handleErrors = (err, req, res, next) => {
         'USER NOT FOUND': { status: 404, msg: 'User does not exist' },
         'ARTICLE NOT FOUND': { status: 404, msg: 'No article with this ID found' },
         'BAD REQUEST': { status: 400, msg: 'Bad request', },
-        'TOO MANY PROPERTIES': { status: 400, msg: 'Bad request, cannot update multiple fields.'},
+        'TOO MANY PROPERTIES': { status: 400, msg: 'Bad request, cannot update extra fields'},
         'NO BODY': { status: 400, msg: 'Comment cannot be empty'},
+        'INVALID ORDER': { status: 400, msg: 'Cannot order items in this way'},
     }
     if ((Object.keys(codes)).includes(err.code)) {
         const { status, msg } = codes[err.code];
@@ -24,6 +25,7 @@ const handlePSQLErrors = (err, req, res, next) => {
     const codes = {
         '22P02': { status: 400, msg: 'Bad request' },
         '23502': { status: 400, msg: 'Bad request' },
+        '42703': { status: 400, msg: 'Bad request' },
         '23503': { status: 404, msg: 'Not found' }, 
     }
     if ((Object.keys(codes)).includes(err.code)) {

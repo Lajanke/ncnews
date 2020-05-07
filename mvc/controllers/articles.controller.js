@@ -27,7 +27,8 @@ const patchVotes = (req, res, next) => {
 const postComment = (req, res, next) => {
     const { article_id } = req.params;
     const { username, body } = req.body;
-    postNewComment(article_id, username, body)
+    const num = Object.keys(req.body).length;
+    postNewComment(article_id, username, body, num)
         .then((comment) => {
             res.status(201).send({ comment });
         })

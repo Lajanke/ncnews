@@ -18,11 +18,11 @@ const fetchArticle = (id) => {
 
 const alterVotes = (id, newVotes, num) => {
     if (newVotes === undefined) {
-        throw { code: 'BAD REQUEST'}
-    }
+        throw { code: 'BAD REQUEST'};
+    };
     if (num > 1) {
-        throw { code: 'TOO MANY PROPERTIES'}
-    }
+        throw { code: 'TOO MANY PROPERTIES'};
+    };
     return connection('articles')
         .where('article_id', '=', id)
         .increment('votes', newVotes)
@@ -32,10 +32,13 @@ const alterVotes = (id, newVotes, num) => {
         });
 };
 
-const postNewComment = (id, username, body) => {
+const postNewComment = (id, username, body, num) => {
     if (body === '') {
-        throw { code: 'NO BODY' }
-    }
+        throw { code: 'NO BODY' };
+    };
+    if (num > 2) {
+        throw { code: 'TOO MANY PROPERTIES'};
+    };
     const newComment = { article_id: id, author: username, body: body };
     return connection('comments')
         .insert(newComment)
@@ -46,6 +49,9 @@ const postNewComment = (id, username, body) => {
 };
 
 const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
+    if (order !== 'asc' && order !== 'desc') {
+        throw { code: 'INVALID ORDER'};
+    };
     return connection('comments')
         .where('article_id', '=', id)
         .select('comment_id', 'author', 'votes', 'created_at', 'body')
@@ -60,6 +66,9 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
 };
 
 const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic ) => {
+    if (order !== 'asc' && order !== 'desc') {
+        throw { code: 'INVALID ORDER'};
+    };
     return connection('articles')
         .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
         .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes')

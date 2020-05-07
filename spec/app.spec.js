@@ -290,7 +290,7 @@ describe('/api', () => {
                     .send({ inc_votes: 1, name: 'mitch' })
                     .expect(400)
                     .then((res) => {
-                        expect(res.body.msg).toBe('Bad request, cannot update multiple fields.');
+                        expect(res.body.msg).toBe('Bad request, cannot update extra fields');
                     });
             });
         });
@@ -403,6 +403,22 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request');
                     });
             });
+            test('GET: status 400: Bad request, when passed a sort_by query for column that does not exist', () => {
+                return request(app)
+                    .get('/api/articles/1/comments?sort_by=not_a_column')
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('GET: status 400: Bad request, when passed something other than asc/desc for order', () => {
+                return request(app)
+                    .get('/api/articles/1/comments?order=not_an_order')
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Cannot order items in this way');
+                    });
+            });
             test('POST: status 404: Article id does not exist', () => {
                 return request(app)
                     .post('/api/articles/200/comments')
@@ -466,6 +482,16 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request');
                     });
             });
+            test('POST: 400. When passed extra items in the body returns bad request', () => {//----------------------------------------
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'lurker', body: 'I am not Luke', pets: 'cat'})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request, cannot update extra fields');
+                    });
+            });
+
         });
     });
     describe('/articles', () => { //ERROR HANDLING NEEDED
