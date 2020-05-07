@@ -10,6 +10,7 @@ const handleErrors = (err, req, res, next) => {
     const codes = {
         'USER NOT FOUND': { status: 404, msg: 'User does not exist' },
         'ARTICLE NOT FOUND': { status: 404, msg: 'No article with this ID found' },
+        'COMMENT NOT FOUND': { status: 404, msg: 'No comment with this ID found'},
         'BAD REQUEST': { status: 400, msg: 'Bad request', },
         'TOO MANY PROPERTIES': { status: 400, msg: 'Bad request, cannot update extra fields'},
         'NO BODY': { status: 400, msg: 'Comment cannot be empty'},

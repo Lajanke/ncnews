@@ -482,7 +482,7 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request');
                     });
             });
-            test('POST: 400. When passed extra items in the body returns bad request', () => {//----------------------------------------
+            test('POST: 400. When passed extra items in the body returns bad request', () => {
                 return request(app)
                     .post('/api/articles/1/comments')
                     .send({ username: 'lurker', body: 'I am not Luke', pets: 'cat'})
@@ -494,7 +494,7 @@ describe('/api', () => {
 
         });
     });
-    describe('/articles', () => { //ERROR HANDLING NEEDED
+    describe('/articles', () => { 
         describe('GET', () => {
             test('Status 200: When requesting all articles responds with all', () => {
                 return request(app)
@@ -693,6 +693,70 @@ describe('/api', () => {
                   })
                 })
                 return Promise.all(requests);
+            });
+
+
+            test('PATCH: Status 404: Comment id does not exist', () => {
+                return request(app)
+                    .patch('/api/comments/200')
+                    .send({inc_votes: 1})
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('No comment with this ID found')
+                    });        
+            });
+            test('PATCH: Status 400: Comment id is invalid', () => {
+                return request(app)
+                    .patch('/api/comments/not_a_real_id')
+                    .send({inc_votes: 1})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request')
+                    });        
+            });
+            test('PATCH: 400. When passed an object without a key of inc_votes returns bad request', () => {
+                return request(app)
+                    .patch('/api/comments/1')
+                    .send({ cat: 1 })
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('PATCH: 400. When passed an object with a key of inc_votes but invalid value returns bad request', () => {
+                return request(app)
+                    .patch('/api/comments/1')
+                    .send({ inc_votes: 'cat' })
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
+            });
+            test('PATCH: 400. When passed an object with a key of inc_votes and extra properties returns bad request', () => {
+                return request(app)
+                    .patch('/api/comments/1')
+                    .send({ inc_votes: 1, name: 'mitch' })
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request, cannot update extra fields');
+                    });
+            });
+            test('DELETE: Status 404: Comment id does not exist', () => {
+                return request(app)
+                    .del('/api/comments/200')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toEqual('No comment with this ID found')
+                    });        
+            });
+            test('DELETE: Status 400: Comment id is invalid', () => {
+                return request(app)
+                    .patch('/api/comments/not_a_real_id')
+                    .send({inc_votes: 1})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request')
+                    });        
             });
         });
     });
