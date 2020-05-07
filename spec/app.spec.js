@@ -650,7 +650,12 @@ describe('/api', () => {
                     .send({ inc_votes: 1 })
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.comment.length).toBe(1);
+                        expect(res.body.comment).toHaveProperty('article_id');
+                        expect(res.body.comment).toHaveProperty('author');
+                        expect(res.body.comment).toHaveProperty('body');
+                        expect(res.body.comment).toHaveProperty('comment_id');
+                        expect(res.body.comment).toHaveProperty('created_at');
+                        expect(res.body.comment).toHaveProperty('votes');
                     });
             });
             test('Status: 200. Increases votes when passed positive integer', () => {
@@ -659,7 +664,7 @@ describe('/api', () => {
                     .send({ inc_votes: 3 })
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.comment[0].votes).toBe(19);
+                        expect(res.body.comment.votes).toBe(19);
                     });
             });
             test('Status: 200. decreases votes when passed negative integer', () => {
@@ -668,7 +673,7 @@ describe('/api', () => {
                     .send({ inc_votes: -5 })
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.comment[0].votes).toBe(11);
+                        expect(res.body.comment.votes).toBe(11);
                     });
             });
             test('Status: 200. Works for different ids', () => {
@@ -677,7 +682,7 @@ describe('/api', () => {
                     .send({ inc_votes: -5 })
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.comment[0].votes).toBe(95);
+                        expect(res.body.comment.votes).toBe(95);
                     });
             });
         });

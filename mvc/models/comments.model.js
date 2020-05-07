@@ -15,7 +15,7 @@ const patchVotesById = (id, newVotes, num) => {
             if (res.length === 0) {
                 throw { code: 'COMMENT NOT FOUND'}
             } else {
-            return res;
+            return res[0];
             };
         });
 };
