@@ -37,7 +37,6 @@ describe('/api', () => {
                     .get('/api/topics')
                     .expect(200)
                     .then((res) => {
-                        console.log(res.body)  /////////////////////////////////
                         expect(res.body.topics.length).toBe(3);
                     });
             });
@@ -58,14 +57,6 @@ describe('/api', () => {
                     .expect(200)
                     .then((res) => {
                         expect(Object.keys(res.body.topics[0]).length).toBe(2);
-                    });
-            });
-            test('Returns topics ordered alphabetically by slug', () => {
-                return request(app)
-                    .get('/api/topics')
-                    .expect(200)
-                    .then((res) => {
-                        expect(res.body.topics).toBeSortedBy('slug');
                     });
             });
         });
