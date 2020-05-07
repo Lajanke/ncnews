@@ -296,12 +296,25 @@ describe('/api', () => {
                     .send({ username: 'lurker', body: 'I have posted.' })
                     .expect(201)
                     .then((res) => {
-                        expect(res.body.comment).toBe('I have posted.');
+                        expect(res.body.comment.body).toBe('I have posted.');
                         return request(app)
                             .get('/api/articles/1')
                             .then((res) => {
                                 expect(res.body.article.comment_count).toBe('14');
                             });
+                    });
+            });
+            test('status 201, posts comment to article', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'lurker', body: 'I have posted.' })
+                    .expect(201)
+                    .then((res) => {
+                        expect(res.body.comment).toHaveProperty('comment_id');
+                        expect(res.body.comment).toHaveProperty('author');
+                        expect(res.body.comment).toHaveProperty('body');
+                        expect(res.body.comment).toHaveProperty('votes');
+                        expect(res.body.comment).toHaveProperty('created_at');
                     });
             });
         });
