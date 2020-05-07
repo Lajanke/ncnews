@@ -11,6 +11,15 @@ describe('/api', () => {
     afterAll(() => {
         return connection.destroy();
     });
+    test('Status 200: Returns an array in the body with a length of 3', () => {
+        return request(app)
+            .get('/api')
+            .expect(200)
+            .then((res) => {
+                expect(typeof res).toBe('object');
+                expect(res.body).toHaveProperty('endpoints');
+            });
+    });
     test('Status 404: Misspelled path', () => {
         return request(app)
             .get('/api/not_a_path')
