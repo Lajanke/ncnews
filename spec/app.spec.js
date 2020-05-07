@@ -595,6 +595,22 @@ describe('/api', () => {
                 return Promise.all(requests);
             });
         });
+        test('GET: status 400: Bad request, when passed a sort_by query for column that does not exist', () => {
+            return request(app)
+                .get('/api/articles?sort_by=not_a_column')
+                .expect(400)
+                .then((res) => {
+                    expect(res.body.msg).toBe('Bad request');
+                });
+        });
+        test('GET: status 400: Bad request, when passed something other than asc/desc for order', () => {
+            return request(app)
+                .get('/api/articles?order=not_an_order')
+                .expect(400)
+                .then((res) => {
+                    expect(res.body.msg).toBe('Cannot order items in this way');
+                });
+        });
     });
     describe('/comments/:comment_id', () => {//ERROR HANDLING NEEDED
         describe('PATCH', () => {
