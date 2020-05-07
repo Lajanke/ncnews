@@ -611,6 +611,22 @@ describe('/api', () => {
                     expect(res.body.msg).toBe('Cannot order items in this way');
                 });
         });
+        test('GET: status 400: Bad request, when passed an author that does not exist', () => {
+            return request(app)
+                .get('/api/articles?author=not_an_author')
+                .expect(404)
+                .then((res) => {
+                    expect(res.body.msg).toBe('No articles found with this property');
+                });
+        });
+        test('GET: status 400: Bad request, when passed a topic that does not exist', () => {
+            return request(app)
+                .get('/api/articles?topic=not_a_topic')
+                .expect(404)
+                .then((res) => {
+                    expect(res.body.msg).toBe('No articles found with this property');
+                });
+        });
     });
     describe('/comments/:comment_id', () => {//ERROR HANDLING NEEDED
         describe('PATCH', () => {

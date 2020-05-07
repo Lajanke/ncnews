@@ -14,6 +14,7 @@ const handleErrors = (err, req, res, next) => {
         'TOO MANY PROPERTIES': { status: 400, msg: 'Bad request, cannot update extra fields'},
         'NO BODY': { status: 400, msg: 'Comment cannot be empty'},
         'INVALID ORDER': { status: 400, msg: 'Cannot order items in this way'},
+        'NO ARTICLES WITH PROP': { status: 404, msg: 'No articles found with this property'},
     }
     if ((Object.keys(codes)).includes(err.code)) {
         const { status, msg } = codes[err.code];

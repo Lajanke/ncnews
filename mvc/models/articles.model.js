@@ -80,6 +80,9 @@ const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic
             if(topic) query.where('articles.topic', '=', topic);
         })
         .then((res) => {
+            if (res.length === 0) {
+                throw { code: 'NO ARTICLES WITH PROP'}
+            }
             return res;
         });
 };
