@@ -70,7 +70,7 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
         });
 };
 
-const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic ) => {
+const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic, page = 1, limit = 50 ) => {
     if (order !== 'asc' && order !== 'desc') {
         throw { code: 'INVALID ORDER'};
     };
@@ -84,6 +84,8 @@ const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic
             if(author) query.where('articles.author', '=', author);
             if(topic) query.where('articles.topic', '=', topic);
         })
+        .limit(limit)
+        .offset((page - 1) * limit)
         .then((res) => {
             if (res.length === 0) {
                 throw { code: 'NO ARTICLES WITH PROP'}

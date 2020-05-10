@@ -541,6 +541,33 @@ describe('/api', () => {
                         });
                     });
             });
+            describe('pagination', () => {
+                test('Returns only 5 results per page', () => {
+                    return request(app)
+                    .get('/api/articles?page=1&limit=5')
+                    .expect(200)
+                    .then((res) => {
+                        expect((res.body.articles).length).toBe(5);
+                    });
+                });
+                test('Returns only 5 results offest by numeber of pages times limit', () => {
+                    return request(app)
+                    .get('/api/articles?page=2&limit=5')
+                    .expect(200)
+                    .then((res) => {
+                        expect((res.body.articles).length).toBe(5);
+                        expect(res.body.articles[0]).toEqual({
+                            author: 'icellusedkars',
+                            title: 'A',
+                            article_id: 6,
+                            topic: 'mitch',
+                            created_at: '1998-11-20T12:21:54.171Z',
+                            votes: 0,
+                            comment_count: '1'
+                          })
+                    });
+                }); 
+            });
             describe('queries', () => {
                 test('Queries: Accepts an order query to change to ascending', () => {
                     return request(app)
@@ -626,7 +653,7 @@ describe('/api', () => {
                 .get('/api/articles?author=not_an_author')
                 .expect(404)
                 .then((res) => {
-                    expect(res.body.msg).toBe('No articles found with this property');
+                    expect(res.body.msg).toBe('Not found');
                 });
         });
         test('GET: status 400: Bad request, when passed a topic that does not exist', () => {
@@ -634,8 +661,16 @@ describe('/api', () => {
                 .get('/api/articles?topic=not_a_topic')
                 .expect(404)
                 .then((res) => {
-                    expect(res.body.msg).toBe('No articles found with this property');
+                    expect(res.body.msg).toBe('Not found');
                 });
+        });
+        test('Staus 404: When not enough results for given level of pagination', () => {
+            return request(app)
+            .get('/api/articles?page=4&limit=5')
+            .expect(404)
+            .then((res) => {
+                expect(res.body.msg).toBe('Not found');
+            });
         });
     });
     describe('/comments/:comment_id', () => {

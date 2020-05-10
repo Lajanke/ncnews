@@ -50,8 +50,8 @@ const getArticleComments = (req, res, next) => {
 };
 
 const getAllArticles = (req, res, next) => {
-    const { sort_by, order, author, topic } = req.query;
-    fetchAllArticles(sort_by, order, author, topic)
+    const { sort_by, order, author, topic, page, limit } = req.query;
+    fetchAllArticles(sort_by, order, author, topic, page, limit)
         .then((articles) => {
             res.status(200).send({ articles });
         })
