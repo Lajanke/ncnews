@@ -39,8 +39,8 @@ const postComment = (req, res, next) => {
 
 const getArticleComments = (req, res, next) => {
     const { article_id } = req.params;
-    const { sort_by, order } = req.query;
-    fetchArticleComments(article_id, sort_by, order)
+    const { sort_by, order, page, limit } = req.query;
+    fetchArticleComments(article_id, sort_by, order, page, limit)
         .then((comments) => {
             res.status(200).send({ comments });
         })

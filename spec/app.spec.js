@@ -315,12 +315,12 @@ describe('/api', () => {
             });
         });
         describe('GET', () => {
-            test('status 200: Returns all comments for a given article id', () => {
+            test('status 200: Returns all comments for a given article id, defaults to 5 results', () => {
                 return request(app)
                     .get('/api/articles/1/comments')
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.comments.length).toBe(13);
+                        expect(res.body.comments.length).toBe(5);
                     });
             });
             test('status 200: Each comment has certain keys. And only 5 keys.', () => {
@@ -355,6 +355,39 @@ describe('/api', () => {
                     .then((res) => {
                         expect(res.body.comments).toEqual([]);
                     });
+            });
+            describe('pagination', () => {
+                test('Returns only 5 results per page', () => {
+                    return request(app)
+                    .get('/api/articles/1/comments')
+                    .expect(200)
+                    .then((res) => {
+                        expect((res.body.comments).length).toBe(5);
+                    });
+                });
+                test('Returns only 5 results offest by number of pages times limit', () => {
+                    return request(app)
+                    .get('/api/articles/1/comments?page=2&limit=5')
+                    .expect(200)
+                    .then((res) => {
+                        expect((res.body.comments).length).toBe(5);
+                        expect(res.body.comments[0]).toEqual({
+                            comment_id: 7,
+                            author: 'icellusedkars',
+                            votes: 0,
+                            created_at: '2011-11-24T12:36:03.389Z',
+                            body: 'Lobster pot'
+                          });
+                    });
+                });
+                test('Staus 200: SErves up an empty array when pagination is further along that results length', () => {
+                    return request(app)
+                    .get('/api/articles/1/comments?page=4&limit=5')
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.comments).toEqual([]);
+                    });
+                }); 
             });
             describe('queries', () => {
                 test('Queries: Accepts an order query to change to ascending', () => {
@@ -506,14 +539,6 @@ describe('/api', () => {
     });
     describe('/articles', () => { 
         describe('GET', () => {
-            test('Status 200: When requesting all articles responds with all', () => {
-                return request(app)
-                    .get('/api/articles')
-                    .expect(200)
-                    .then((res) => {
-                        expect(res.body.articles.length).toBe(12);
-                    });
-            });
             test('Status 200: All articles have certain keys and no more', () => {
                 return request(app)
                     .get('/api/articles')
@@ -606,12 +631,12 @@ describe('/api', () => {
                             })
                         });
                 });
-                test('Queries: Accepts an author query and then filters for the matching username', () => {
+                test('Queries: Accepts an author query and then filters for the matching username, defaults to 5 results', () => {
                     return request(app)
                         .get('/api/articles?topic=mitch')
                         .expect(200)
                         .then((res) => {
-                            expect(res.body.articles.length).toBe(11);
+                            expect(res.body.articles.length).toBe(5);
                             res.body.articles.forEach(article => {
                                 expect(article.topic).toBe('mitch');
                             });
@@ -631,47 +656,47 @@ describe('/api', () => {
                 })
                 return Promise.all(requests);
             });
-        });
-        test('GET: status 400: Bad request, when passed a sort_by query for column that does not exist', () => {
-            return request(app)
-                .get('/api/articles?sort_by=not_a_column')
-                .expect(400)
-                .then((res) => {
-                    expect(res.body.msg).toBe('Bad request');
-                });
-        });
-        test('GET: status 400: Bad request, when passed something other than asc/desc for order', () => {
-            return request(app)
-                .get('/api/articles?order=not_an_order')
-                .expect(400)
-                .then((res) => {
-                    expect(res.body.msg).toBe('Cannot order items in this way');
-                });
-        });
-        test('GET: status 400: Bad request, when passed an author that does not exist', () => {
-            return request(app)
-                .get('/api/articles?author=not_an_author')
-                .expect(404)
-                .then((res) => {
-                    expect(res.body.msg).toBe('Not found');
-                });
-        });
-        test('GET: status 400: Bad request, when passed a topic that does not exist', () => {
-            return request(app)
-                .get('/api/articles?topic=not_a_topic')
-                .expect(404)
-                .then((res) => {
-                    expect(res.body.msg).toBe('Not found');
-                });
-        });
-        test('Staus 404: When not enough results for given level of pagination', () => {
-            return request(app)
-            .get('/api/articles?page=4&limit=5')
-            .expect(404)
-            .then((res) => {
-                expect(res.body.msg).toBe('Not found');
+            test('GET: status 400: Bad request, when passed a sort_by query for column that does not exist', () => {
+                return request(app)
+                    .get('/api/articles?sort_by=not_a_column')
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request');
+                    });
             });
-        });
+            test('GET: status 400: Bad request, when passed something other than asc/desc for order', () => {
+                return request(app)
+                    .get('/api/articles?order=not_an_order')
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Cannot order items in this way');
+                    });
+            });
+            test('GET: status 400: Bad request, when passed an author that does not exist', () => {
+                return request(app)
+                    .get('/api/articles?author=not_an_author')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Not found');
+                    });
+            });
+            test('GET: status 400: Bad request, when passed a topic that does not exist', () => {
+                return request(app)
+                    .get('/api/articles?topic=not_a_topic')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Not found');
+                    });
+            });
+            test('Staus 404: When not enough results for given level of pagination', () => {
+                return request(app)
+                .get('/api/articles?page=4&limit=5')
+                .expect(404)
+                .then((res) => {
+                    expect(res.body.msg).toBe('Not found');
+                });
+            });
+        });  
     });
     describe('/comments/:comment_id', () => {
         describe('PATCH', () => {
@@ -729,14 +754,14 @@ describe('/api', () => {
         describe('DELETE', () => {
             test('Deletes comment with matching id', () => {
                 return request(app)
-                    .del('/api/comments/2')
+                    .del('/api/comments/1')
                     .expect(204)
                     .then(() => {
                         return request(app)
-                            .get('/api/articles/1/comments')
+                            .get('/api/articles/9/comments')
                             .expect(200)
                             .then((res) => {
-                                expect(res.body.comments.length).toBe(12);
+                                expect(res.body.comments.length).toBe(1);
                             });
                     });
             });

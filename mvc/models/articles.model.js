@@ -45,7 +45,7 @@ const postNewComment = (id, username, body, num) => {
         });
 };
 
-const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
+const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', page = 1, limit = 5) => {
     if (order !== 'asc' && order !== 'desc') {
         throw { code: 'INVALID ORDER'};
     };
@@ -53,6 +53,8 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
         .where('article_id', '=', id)
         .select('comment_id', 'author', 'votes', 'created_at', 'body')
         .orderBy(sort_by, order)
+        .limit(limit)
+        .offset((page - 1) * limit)
         .then((res) => {
             if (res.length === 0) {
                return connection('articles')
@@ -70,7 +72,7 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc') => {
         });
 };
 
-const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic, page = 1, limit = 50 ) => {
+const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic, page = 1, limit = 5 ) => {
     if (order !== 'asc' && order !== 'desc') {
         throw { code: 'INVALID ORDER'};
     };
