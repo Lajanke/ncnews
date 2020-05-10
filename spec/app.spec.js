@@ -652,9 +652,28 @@ describe('/api', () => {
                 });
             })
         });
+
+        describe('POST', () => {
+            test('status 201, posts a new article', () => {
+                return request(app)
+                    .post('/api/articles/')
+                    .send({ author: 'lurker', title: 'Where are all the meows', topic: 'cats', body: 'Why isn\'t there more cats.' })
+                    .expect(201)
+                    .then((res) => {
+                        expect(res.body.article.body).toBe('Why isn\'t there more cats.');
+                        expect(res.body.article.article_id).toBe(13);
+                        expect(res.body.article.votes).toBe(0);
+                        expect(res.body.article.title).toBe('Where are all the meows');
+                        expect(res.body.article.topic).toBe('cats');
+                        expect(res.body.article.author).toBe('lurker');
+                        expect(res.body.article).toHaveProperty('created_at');
+                    });
+            });
+        });
+
         describe('errors', () => {
             test('Status 405: Method not allowed', () => {
-                const invalidMethods = ['post', 'patch', 'delete',]
+                const invalidMethods = ['patch', 'delete',]
                 const requests = invalidMethods.map(method => {
                     return request(app)[method]('/api/articles')
                         .expect(405)

@@ -96,4 +96,13 @@ const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic
         });
 };
 
-module.exports = { fetchArticle, alterVotes, postNewComment, fetchArticleComments, fetchAllArticles }
+const postNewArticle = (article) => {
+    return connection('articles')
+        .insert(article)
+        .returning('*')
+        .then((res) => {
+            return res[0];
+        });
+};
+
+module.exports = { fetchArticle, alterVotes, postNewComment, fetchArticleComments, fetchAllArticles, postNewArticle }
