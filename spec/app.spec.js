@@ -81,6 +81,14 @@ describe('/api', () => {
                 })
                 return Promise.all(requests);
             });
+            test('Status 404: When passed pagination query further than results returns not found', () => {
+                return request(app)
+                    .get('/api/topics?page=2&limit=5')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Not found');
+                    });
+                });
         });
     });
     describe('/users/:username', () => {

@@ -16,6 +16,7 @@ const handleErrors = (err, req, res, next) => {
         'NO BODY': { status: 400, msg: 'Comment cannot be empty'},
         'INVALID ORDER': { status: 400, msg: 'Cannot order items in this way'},
         'NO ARTICLES WITH PROP': { status: 404, msg: 'Not found'},
+        'NOT FOUND': { status: 404, msg: 'Not found' },
     }
     if ((Object.keys(codes)).includes(err.code)) {
         const { status, msg } = codes[err.code];
