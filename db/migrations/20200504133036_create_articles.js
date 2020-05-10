@@ -7,8 +7,8 @@ exports.up = function(knex) {
         articlesTable.integer('votes').defaultTo(0);
         articlesTable.string('topic').notNullable();
         articlesTable.string('author').notNullable();
-        articlesTable.foreign('topic').references('topics.slug');
-        articlesTable.foreign('author').references('users.username');
+        articlesTable.foreign('topic').references('topics.slug').onDelete('CASCADE');
+        articlesTable.foreign('author').references('users.username').onDelete('CASCADE');
         articlesTable.timestamp('created_at').defaultTo(knex.fn.now());
     });
 };

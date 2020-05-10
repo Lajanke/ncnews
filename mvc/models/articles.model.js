@@ -86,7 +86,7 @@ const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic
             if(author) query.where('articles.author', '=', author);
             if(topic) query.where('articles.topic', '=', topic);
         })
-        .limit(limit)
+        .limit(limit)     
         .offset((p - 1) * limit)
         .then((res) => {
             if (res.length === 0) {
@@ -105,9 +105,20 @@ const postNewArticle = (article) => {
         });
 };
 
+const deleteArticleById = (id) => {
+    console.log(id)
+    return connection('articles')
+        .where('article_id', '=', id)
+        .del()
+        .then((res) => {
+            return res;
+        })
+}
+
 module.exports = {  fetchArticle, 
                     alterVotes, 
                     postNewComment, 
                     fetchArticleComments, 
                     fetchAllArticles, 
-                    postNewArticle, }
+                    postNewArticle,
+                    deleteArticleById, }

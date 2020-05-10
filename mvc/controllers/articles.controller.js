@@ -3,7 +3,8 @@ const { fetchArticle,
         postNewComment, 
         fetchArticleComments, 
         fetchAllArticles, 
-        postNewArticle, } = require('../models/articles.model');
+        postNewArticle,
+        deleteArticleById } = require('../models/articles.model');
 
 const getArticle = (req, res, next) => {
     const { article_id } = req.params;
@@ -58,6 +59,7 @@ const getAllArticles = (req, res, next) => {
     const { sort_by, order, author, topic, p, limit } = req.query;
     fetchAllArticles(sort_by, order, author, topic, p, limit)
         .then((articles) => {
+            console.log(articles)
             res.status(200).send({ articles });
         })
         .catch((err) => {
@@ -74,9 +76,22 @@ const postArticle = (req, res, next) => {
             next(err);
         });
 };
+
+const deleteArticle = (req, res, next) => {
+    const { article_id } = req.params;
+    deleteArticleById(article_id)
+    .then(() => {
+        res.sendStatus(204);
+    })
+    .catch((err) => {
+        next(err);
+    });
+}
+
 module.exports = {  getArticle, 
                     patchVotes, 
                     postComment, 
                     getArticleComments, 
                     getAllArticles, 
-                    postArticle, };
+                    postArticle,
+                    deleteArticle };

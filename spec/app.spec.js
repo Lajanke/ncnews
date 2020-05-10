@@ -226,9 +226,24 @@ describe('/api', () => {
                     });
             });
         });
+        describe('DELETE', () => {
+            test('Status 204: Deletes article with given id', () => {
+                return request(app)
+                    .del('/api/articles/9')
+                    .expect(204)
+                    .then(() => {
+                        return request(app)
+                            .get('/api/articles/9/comments')
+                            .expect(404)
+                            .then((res) => {
+                                expect(res.body.msg).toBe('No article with this ID found');
+                            });
+                    });
+            });
+        });
         describe('errors', () => {
             test('Status 405: Method not allowed', () => {
-                const invalidMethods = ['post', 'delete',]
+                const invalidMethods = ['post',]
                 const requests = invalidMethods.map(method => {
                     return request(app)[method]('/api/articles/1')
                         .expect(405)
@@ -751,7 +766,7 @@ describe('/api', () => {
             test('POST: Staus 400: When passed nothing in the body returns bad request', () => {
                 return request(app)
                     .post('/api/articles/')
-                    .send({author: 'lurker', title: 'Where are all the meows', body: 'Why isn\'t there more cats.'})
+                    .send({ author: 'lurker', title: 'Where are all the meows', body: 'Why isn\'t there more cats.' })
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toEqual('Bad request')
