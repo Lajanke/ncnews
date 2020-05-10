@@ -105,4 +105,9 @@ const postNewArticle = (article) => {
         });
 };
 
-module.exports = { fetchArticle, alterVotes, postNewComment, fetchArticleComments, fetchAllArticles, postNewArticle }
+module.exports = {  fetchArticle, 
+                    alterVotes, 
+                    postNewComment, 
+                    fetchArticleComments, 
+                    fetchAllArticles, 
+                    postNewArticle, }

@@ -1,4 +1,9 @@
-const { fetchArticle, alterVotes, postNewComment, fetchArticleComments, fetchAllArticles, postNewArticle } = require('../models/articles.model');
+const { fetchArticle, 
+        alterVotes, 
+        postNewComment, 
+        fetchArticleComments, 
+        fetchAllArticles, 
+        postNewArticle, } = require('../models/articles.model');
 
 const getArticle = (req, res, next) => {
     const { article_id } = req.params;
@@ -60,9 +65,7 @@ const getAllArticles = (req, res, next) => {
         });
 };
 
-
 const postArticle = (req, res, next) => {
-    const { username, title, topic, body} = req.body;
     postNewArticle(req.body)
         .then((article) => {
             res.status(201).send({ article });
@@ -71,4 +74,9 @@ const postArticle = (req, res, next) => {
             next(err);
         });
 };
-module.exports = { getArticle, patchVotes, postComment, getArticleComments, getAllArticles, postArticle };
+module.exports = {  getArticle, 
+                    patchVotes, 
+                    postComment, 
+                    getArticleComments, 
+                    getAllArticles, 
+                    postArticle, };

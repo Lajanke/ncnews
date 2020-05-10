@@ -652,7 +652,6 @@ describe('/api', () => {
                 });
             })
         });
-
         describe('POST', () => {
             test('status 201, posts a new article', () => {
                 return request(app)
@@ -670,7 +669,6 @@ describe('/api', () => {
                     });
             });
         });
-
         describe('errors', () => {
             test('Status 405: Method not allowed', () => {
                 const invalidMethods = ['patch', 'delete',]
@@ -721,6 +719,42 @@ describe('/api', () => {
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toBe('Not found');
+                    });
+            });
+            test('POST: Staus 404: When passed a username that doesn\'t exist returns not found', () => {
+                return request(app)
+                    .post('/api/articles/')
+                    .send({ author: 'not_a_user', title: 'Where are all the meows', topic: 'cats', body: 'Why isn\'t there more cats.' })
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toEqual('Not found')
+                    });
+            });
+            test('POST: Staus 404: When passed a username that doesn\'t exist returns not found', () => {
+                return request(app)
+                    .post('/api/articles/')
+                    .send({ author: 'lurker', title: 'Where are all the meows', topic: 'not_a_topic', body: 'Why isn\'t there more cats.' })
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toEqual('Not found')
+                    });
+            });
+            test('POST: Staus 400: When passed nothing in the body returns bad request', () => {
+                return request(app)
+                    .post('/api/articles/')
+                    .send({})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toEqual('Bad request')
+                    });
+            });
+            test('POST: Staus 400: When passed nothing in the body returns bad request', () => {
+                return request(app)
+                    .post('/api/articles/')
+                    .send({author: 'lurker', title: 'Where are all the meows', body: 'Why isn\'t there more cats.'})
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toEqual('Bad request')
                     });
             });
         });
