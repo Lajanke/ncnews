@@ -39,8 +39,8 @@ const postComment = (req, res, next) => {
 
 const getArticleComments = (req, res, next) => {
     const { article_id } = req.params;
-    const { sort_by, order, page, limit } = req.query;
-    fetchArticleComments(article_id, sort_by, order, page, limit)
+    const { sort_by, order, p, limit } = req.query;
+    fetchArticleComments(article_id, sort_by, order, p, limit)
         .then((comments) => {
             res.status(200).send({ comments });
         })
@@ -50,8 +50,8 @@ const getArticleComments = (req, res, next) => {
 };
 
 const getAllArticles = (req, res, next) => {
-    const { sort_by, order, author, topic, page, limit } = req.query;
-    fetchAllArticles(sort_by, order, author, topic, page, limit)
+    const { sort_by, order, author, topic, p, limit } = req.query;
+    fetchAllArticles(sort_by, order, author, topic, p, limit)
         .then((articles) => {
             res.status(200).send({ articles });
         })

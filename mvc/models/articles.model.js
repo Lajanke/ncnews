@@ -45,7 +45,7 @@ const postNewComment = (id, username, body, num) => {
         });
 };
 
-const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', page = 1, limit = 5) => {
+const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', p = 1, limit = 10) => {
     if (order !== 'asc' && order !== 'desc') {
         throw { code: 'INVALID ORDER'};
     };
@@ -54,7 +54,7 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', page =
         .select('comment_id', 'author', 'votes', 'created_at', 'body')
         .orderBy(sort_by, order)
         .limit(limit)
-        .offset((page - 1) * limit)
+        .offset((p - 1) * limit)
         .then((res) => {
             if (res.length === 0) {
                return connection('articles')
@@ -72,7 +72,7 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', page =
         });
 };
 
-const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic, page = 1, limit = 5 ) => {
+const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic, p = 1, limit = 10 ) => {
     if (order !== 'asc' && order !== 'desc') {
         throw { code: 'INVALID ORDER'};
     };
@@ -87,7 +87,7 @@ const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic
             if(topic) query.where('articles.topic', '=', topic);
         })
         .limit(limit)
-        .offset((page - 1) * limit)
+        .offset((p - 1) * limit)
         .then((res) => {
             if (res.length === 0) {
                 throw { code: 'NO ARTICLES WITH PROP'}

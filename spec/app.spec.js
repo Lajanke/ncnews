@@ -24,24 +24,24 @@ describe('/api', () => {
         return request(app)
             .get('/api/not_a_path')
             .expect(404)
-            .then(({body: {msg}}) => {
+            .then(({ body: { msg } }) => {
                 expect(msg).toBe('Path not found');
             });
     });
     test('Status 405: Method not allowed', () => {
         const invalidMethods = ['post', 'patch', 'delete']
         const requests = invalidMethods.map(method => {
-          return request(app)[method]('/api')
-          .expect(405)
-          .then((res) => {
-            expect(res.body.msg).toBe('Method not allowed')
-          })
+            return request(app)[method]('/api')
+                .expect(405)
+                .then((res) => {
+                    expect(res.body.msg).toBe('Method not allowed')
+                })
         })
         return Promise.all(requests);
     });
     describe('/topics', () => {
         describe('GET', () => {
-            test('Status 200: Returns an array in the body with a length of 3', () => {
+            test('Status 200: Returns an array in the body with a length of 3, defaults to 10', () => {
                 return request(app)
                     .get('/api/topics')
                     .expect(200)
@@ -73,22 +73,22 @@ describe('/api', () => {
             test('Status 405: Method not allowed', () => {
                 const invalidMethods = ['post', 'patch', 'delete',]
                 const requests = invalidMethods.map(method => {
-                  return request(app)[method]('/api/topics')
-                  .expect(405)
-                  .then((res) => {
-                    expect(res.body.msg).toBe('Method not allowed')
-                  })
+                    return request(app)[method]('/api/topics')
+                        .expect(405)
+                        .then((res) => {
+                            expect(res.body.msg).toBe('Method not allowed')
+                        })
                 })
                 return Promise.all(requests);
             });
             test('Status 404: When passed pagination query further than results returns not found', () => {
                 return request(app)
-                    .get('/api/topics?page=2&limit=5')
+                    .get('/api/topics?p=2&limit=10')
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toBe('Not found');
                     });
-                });
+            });
         });
     });
     describe('/users/:username', () => {
@@ -118,11 +118,11 @@ describe('/api', () => {
             test('Status 405: Method not allowed', () => {
                 const invalidMethods = ['post', 'patch', 'delete',]
                 const requests = invalidMethods.map(method => {
-                  return request(app)[method]('/api/users/butter_bridge')
-                  .expect(405)
-                  .then((res) => {
-                    expect(res.body.msg).toBe('Method not allowed')
-                  })
+                    return request(app)[method]('/api/users/butter_bridge')
+                        .expect(405)
+                        .then((res) => {
+                            expect(res.body.msg).toBe('Method not allowed')
+                        })
                 })
                 return Promise.all(requests);
             });
@@ -132,7 +132,7 @@ describe('/api', () => {
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toBe('User does not exist')
-                    });        
+                    });
             });
         });
     });
@@ -218,23 +218,23 @@ describe('/api', () => {
             });
             test('Status 200. When passed an object without a key of inc_votes returns the article unchanged', () => {
                 return request(app)
-                .patch('/api/articles/12')
-                .send()
-                .expect(200)
-                .then((res) => {
-                    expect(res.body.article.votes).toBe(0);
-                });
+                    .patch('/api/articles/12')
+                    .send()
+                    .expect(200)
+                    .then((res) => {
+                        expect(res.body.article.votes).toBe(0);
+                    });
             });
         });
         describe('errors', () => {
             test('Status 405: Method not allowed', () => {
-                const invalidMethods = ['post','delete',]
+                const invalidMethods = ['post', 'delete',]
                 const requests = invalidMethods.map(method => {
-                  return request(app)[method]('/api/articles/1')
-                  .expect(405)
-                  .then((res) => {
-                    expect(res.body.msg).toBe('Method not allowed')
-                  })
+                    return request(app)[method]('/api/articles/1')
+                        .expect(405)
+                        .then((res) => {
+                            expect(res.body.msg).toBe('Method not allowed')
+                        })
                 })
                 return Promise.all(requests);
             });
@@ -244,7 +244,7 @@ describe('/api', () => {
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toBe('No article with this ID found')
-                    });        
+                    });
             });
             test('GET: Status 400: Invalid article id', () => {
                 return request(app)
@@ -252,25 +252,25 @@ describe('/api', () => {
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toBe('Bad request')
-                    });        
+                    });
             });
             test('PATCH: Status 404: Article id does not exist', () => {
                 return request(app)
                     .patch('/api/articles/200')
-                    .send({inc_votes: 1})
+                    .send({ inc_votes: 1 })
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toBe('No article with this ID found')
-                    });        
+                    });
             });
             test('PATCH: Status 400: Article id is invalid', () => {
                 return request(app)
                     .patch('/api/articles/not_a_real_id')
-                    .send({inc_votes: 1})
+                    .send({ inc_votes: 1 })
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toBe('Bad request')
-                    });        
+                    });
             });
             test('PATCH: 400. When passed an object with a key of inc_votes but invalid value returns bad request', () => {
                 return request(app)
@@ -323,12 +323,12 @@ describe('/api', () => {
             });
         });
         describe('GET', () => {
-            test('status 200: Returns all comments for a given article id, defaults to 5 results', () => {
+            test('status 200: Returns all comments for a given article id, defaults to 10 results', () => {
                 return request(app)
                     .get('/api/articles/1/comments')
                     .expect(200)
                     .then((res) => {
-                        expect(res.body.comments.length).toBe(5);
+                        expect(res.body.comments.length).toBe(10);
                     });
             });
             test('status 200: Each comment has certain keys. And only 5 keys.', () => {
@@ -365,37 +365,37 @@ describe('/api', () => {
                     });
             });
             describe('pagination', () => {
-                test('Returns only 5 results per page', () => {
+                test('Defaults to return only 10 results per page', () => {
                     return request(app)
-                    .get('/api/articles/1/comments')
-                    .expect(200)
-                    .then((res) => {
-                        expect((res.body.comments).length).toBe(5);
-                    });
+                        .get('/api/articles/1/comments')
+                        .expect(200)
+                        .then((res) => {
+                            expect((res.body.comments).length).toBe(10);
+                        });
                 });
-                test('Returns only 5 results offest by number of pages times limit', () => {
+                test('Returns only 10 results offest by number of \(pages - 1\) times limit', () => {
                     return request(app)
-                    .get('/api/articles/1/comments?page=2&limit=5')
-                    .expect(200)
-                    .then((res) => {
-                        expect((res.body.comments).length).toBe(5);
-                        expect(res.body.comments[0]).toEqual({
-                            comment_id: 7,
-                            author: 'icellusedkars',
-                            votes: 0,
-                            created_at: '2011-11-24T12:36:03.389Z',
-                            body: 'Lobster pot'
-                          });
-                    });
+                        .get('/api/articles/1/comments?p=2&limit=10')
+                        .expect(200)
+                        .then((res) => {
+                            expect((res.body.comments).length).toBe(3);
+                            expect(res.body.comments[0]).toEqual({
+                                comment_id: 12,
+                                author: 'icellusedkars',
+                                votes: 0,
+                                created_at: '2006-11-25T12:36:03.389Z',
+                                body: 'Massive intercranial brain haemorrhage'
+                            });
+                        });
                 });
-                test('Staus 200: SErves up an empty array when pagination is further along that results length', () => {
+                test('Staus 200: Serves up an empty array when pagination is further along that results length', () => {
                     return request(app)
-                    .get('/api/articles/1/comments?page=4&limit=5')
-                    .expect(200)
-                    .then((res) => {
-                        expect(res.body.comments).toEqual([]);
-                    });
-                }); 
+                        .get('/api/articles/1/comments?p=4&limit=10')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.comments).toEqual([]);
+                        });
+                });
             });
             describe('queries', () => {
                 test('Queries: Accepts an order query to change to ascending', () => {
@@ -428,13 +428,13 @@ describe('/api', () => {
         });
         describe('errors', () => {
             test('Status 405: Method not allowed', () => {
-                const invalidMethods = ['patch','delete',]
+                const invalidMethods = ['patch', 'delete',]
                 const requests = invalidMethods.map(method => {
-                  return request(app)[method]('/api/articles/1/comments')
-                  .expect(405)
-                  .then((res) => {
-                    expect(res.body.msg).toBe('Method not allowed')
-                  })
+                    return request(app)[method]('/api/articles/1/comments')
+                        .expect(405)
+                        .then((res) => {
+                            expect(res.body.msg).toBe('Method not allowed')
+                        })
                 })
                 return Promise.all(requests);
             });
@@ -491,7 +491,7 @@ describe('/api', () => {
             test('POST: 404. When passed a username that does not exist returns not found', () => {
                 return request(app)
                     .post('/api/articles/1/comments')
-                    .send({ username: 'luke', body: 'I am luke'})
+                    .send({ username: 'luke', body: 'I am luke' })
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toBe('Not found');
@@ -500,7 +500,7 @@ describe('/api', () => {
             test('POST: 400. When passed an object without username key returns bad request', () => {
                 return request(app)
                     .post('/api/articles/1/comments')
-                    .send({ body: 'I am not luke'})
+                    .send({ body: 'I am not luke' })
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toBe('Bad request');
@@ -509,7 +509,7 @@ describe('/api', () => {
             test('POST: 400. When passed an object without body key returns bad request', () => {
                 return request(app)
                     .post('/api/articles/1/comments')
-                    .send({ username: 'lurker'})
+                    .send({ username: 'lurker' })
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toBe('Bad request');
@@ -518,7 +518,7 @@ describe('/api', () => {
             test('POST: 400. When passed an object with body of empty string returns a custom message', () => {
                 return request(app)
                     .post('/api/articles/1/comments')
-                    .send({ username: 'lurker', body: ''})
+                    .send({ username: 'lurker', body: '' })
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toBe('Comment cannot be empty');
@@ -536,7 +536,7 @@ describe('/api', () => {
             test('POST: 400. When passed extra items in the body returns bad request', () => {
                 return request(app)
                     .post('/api/articles/1/comments')
-                    .send({ username: 'lurker', body: 'I am not Luke', pets: 'cat'})
+                    .send({ username: 'lurker', body: 'I am not Luke', pets: 'cat' })
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toBe('Bad request, cannot update extra fields');
@@ -545,7 +545,7 @@ describe('/api', () => {
 
         });
     });
-    describe('/articles', () => { 
+    describe('/articles', () => {
         describe('GET', () => {
             test('Status 200: All articles have certain keys and no more', () => {
                 return request(app)
@@ -575,31 +575,31 @@ describe('/api', () => {
                     });
             });
             describe('pagination', () => {
-                test('Returns only 5 results per page', () => {
+                test('Returns only 10 results per page', () => {
                     return request(app)
-                    .get('/api/articles?page=1&limit=5')
-                    .expect(200)
-                    .then((res) => {
-                        expect((res.body.articles).length).toBe(5);
-                    });
+                        .get('/api/articles?p=1&limit=10')
+                        .expect(200)
+                        .then((res) => {
+                            expect((res.body.articles).length).toBe(10);
+                        });
                 });
-                test('Returns only 5 results offest by numeber of pages times limit', () => {
+                test('Returns only 10 results offest by numeber of \(pages - 1\) times limit', () => {
                     return request(app)
-                    .get('/api/articles?page=2&limit=5')
-                    .expect(200)
-                    .then((res) => {
-                        expect((res.body.articles).length).toBe(5);
-                        expect(res.body.articles[0]).toEqual({
-                            author: 'icellusedkars',
-                            title: 'A',
-                            article_id: 6,
-                            topic: 'mitch',
-                            created_at: '1998-11-20T12:21:54.171Z',
-                            votes: 0,
-                            comment_count: '1'
-                          })
-                    });
-                }); 
+                        .get('/api/articles?p=2&limit=10')
+                        .expect(200)
+                        .then((res) => {
+                            expect((res.body.articles).length).toBe(2);
+                            expect(res.body.articles[0]).toEqual({
+                                author: 'icellusedkars',
+                                title: 'Am I a cat?',
+                                article_id: 11,
+                                topic: 'mitch',
+                                created_at: '1978-11-25T12:21:54.171Z',
+                                votes: 0,
+                                comment_count: '0'
+                            });
+                        });
+                });
             });
             describe('queries', () => {
                 test('Queries: Accepts an order query to change to ascending', () => {
@@ -639,12 +639,12 @@ describe('/api', () => {
                             })
                         });
                 });
-                test('Queries: Accepts an author query and then filters for the matching username, defaults to 5 results', () => {
+                test('Queries: Accepts an author query and then filters for the matching username, defaults to 10 results', () => {
                     return request(app)
                         .get('/api/articles?topic=mitch')
                         .expect(200)
                         .then((res) => {
-                            expect(res.body.articles.length).toBe(5);
+                            expect(res.body.articles.length).toBe(10);
                             res.body.articles.forEach(article => {
                                 expect(article.topic).toBe('mitch');
                             });
@@ -656,11 +656,11 @@ describe('/api', () => {
             test('Status 405: Method not allowed', () => {
                 const invalidMethods = ['post', 'patch', 'delete',]
                 const requests = invalidMethods.map(method => {
-                  return request(app)[method]('/api/articles')
-                  .expect(405)
-                  .then((res) => {
-                    expect(res.body.msg).toBe('Method not allowed')
-                  })
+                    return request(app)[method]('/api/articles')
+                        .expect(405)
+                        .then((res) => {
+                            expect(res.body.msg).toBe('Method not allowed')
+                        })
                 })
                 return Promise.all(requests);
             });
@@ -696,15 +696,15 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Not found');
                     });
             });
-            test('Staus 404: When not enough results for given level of pagination', () => {
+            test('Staus 404: When not enough results for given level of pagination returns not found', () => {
                 return request(app)
-                .get('/api/articles?page=4&limit=5')
-                .expect(404)
-                .then((res) => {
-                    expect(res.body.msg).toBe('Not found');
-                });
+                    .get('/api/articles?p=4&limit=5')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Not found');
+                    });
             });
-        });  
+        });
     });
     describe('/comments/:comment_id', () => {
         describe('PATCH', () => {
@@ -778,31 +778,31 @@ describe('/api', () => {
             test('Status 405: Method not allowed', () => {
                 const invalidMethods = ['get', 'post',]
                 const requests = invalidMethods.map(method => {
-                  return request(app)[method]('/api/comments/:comment_id')
-                  .expect(405)
-                  .then((res) => {
-                    expect(res.body.msg).toBe('Method not allowed')
-                  })
+                    return request(app)[method]('/api/comments/:comment_id')
+                        .expect(405)
+                        .then((res) => {
+                            expect(res.body.msg).toBe('Method not allowed')
+                        })
                 })
                 return Promise.all(requests);
             });
             test('PATCH: Status 404: Comment id does not exist', () => {
                 return request(app)
                     .patch('/api/comments/200')
-                    .send({inc_votes: 1})
+                    .send({ inc_votes: 1 })
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toBe('No comment with this ID found')
-                    });        
+                    });
             });
             test('PATCH: Status 400: Comment id is invalid', () => {
                 return request(app)
                     .patch('/api/comments/not_a_real_id')
-                    .send({inc_votes: 1})
+                    .send({ inc_votes: 1 })
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toBe('Bad request')
-                    });        
+                    });
             });
             test('PATCH: 400. When passed an object with a key of inc_votes but invalid value returns bad request', () => {
                 return request(app)
@@ -828,16 +828,16 @@ describe('/api', () => {
                     .expect(404)
                     .then((res) => {
                         expect(res.body.msg).toEqual('No comment with this ID found')
-                    });        
+                    });
             });
             test('DELETE: Status 400: Comment id is invalid', () => {
                 return request(app)
                     .patch('/api/comments/not_a_real_id')
-                    .send({inc_votes: 1})
+                    .send({ inc_votes: 1 })
                     .expect(400)
                     .then((res) => {
                         expect(res.body.msg).toBe('Bad request')
-                    });        
+                    });
             });
         });
     });
