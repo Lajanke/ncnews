@@ -89,9 +89,6 @@ const fetchAllArticles = (sort_by = 'created_at', order = 'desc', author, topic,
         .limit(limit)
         .offset((p - 1) * limit)
         .then((res) => {
-            if (res.length === 0) {
-                throw { code: 'NO ARTICLES WITH PROP' }
-            }
             return res;
         });
 };

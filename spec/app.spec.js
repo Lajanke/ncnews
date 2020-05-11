@@ -573,7 +573,6 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request, cannot update extra fields');
                     });
             });
-
         });
     });
     describe('/articles', () => {
@@ -670,7 +669,16 @@ describe('/api', () => {
                             })
                         });
                 });
-                test('Queries: Accepts an author query and then filters for the matching username, defaults to 10 results', () => {
+
+                test('Queries: If passed an author query that has no articles returns 200 and empty array', () => {
+                    return request(app)
+                        .get('/api/articles?author=lurker')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.articles).toEqual([]);
+                        });
+                });
+                test('Queries: Accepts a topic query and then filters for the matching username, defaults to 10 results', () => {
                     return request(app)
                         .get('/api/articles?topic=mitch')
                         .expect(200)
@@ -679,6 +687,14 @@ describe('/api', () => {
                             res.body.articles.forEach(article => {
                                 expect(article.topic).toBe('mitch');
                             });
+                        });
+                });
+                test('Queries: If passed a topic query that has no articles returns 200 and empty array', () => {
+                    return request(app)
+                        .get('/api/articles?topic=paper')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.articles).toEqual([]);
                         });
                 });
             })
@@ -733,23 +749,15 @@ describe('/api', () => {
                     .get('/api/articles?author=not_an_author')
                     .expect(404)
                     .then((res) => {
-                        expect(res.body.msg).toBe('Not found');
+                        expect(res.body.msg).toBe('User does not exist');
                     });
             });
             test('GET: status 400: Bad request, when passed a topic that does not exist', () => {
                 return request(app)
                     .get('/api/articles?topic=not_a_topic')
-                    .expect(404)
+                    .expect(400)
                     .then((res) => {
-                        expect(res.body.msg).toBe('Not found');
-                    });
-            });
-            test('Staus 404: When not enough results for given level of pagination returns not found', () => {
-                return request(app)
-                    .get('/api/articles?p=4&limit=5')
-                    .expect(404)
-                    .then((res) => {
-                        expect(res.body.msg).toBe('Not found');
+                        expect(res.body.msg).toBe('Bad request');
                     });
             });
             test('POST: Staus 404: When passed a username that doesn\'t exist returns not found', () => {

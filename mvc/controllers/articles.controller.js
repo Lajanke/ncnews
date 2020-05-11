@@ -6,6 +6,10 @@ const { fetchArticle,
         postNewArticle,
         deleteArticleById } = require('../models/articles.model');
 
+const { fetchUser } = require('../models/users.model.js');
+
+const { fetchTopicByName } = require('../models/topics.model')
+
 const getArticle = (req, res, next) => {
     const { article_id } = req.params;
     fetchArticle(article_id)
@@ -57,8 +61,11 @@ const getArticleComments = (req, res, next) => {
 
 const getAllArticles = (req, res, next) => {
     const { sort_by, order, author, topic, p, limit } = req.query;
-    fetchAllArticles(sort_by, order, author, topic, p, limit)
-        .then((articles) => {
+    const queries = [ fetchAllArticles(sort_by, order, author, topic, p, limit) ]
+    if (author) queries.push(fetchUser(author)) 
+    if (topic) queries.push(fetchTopicByName(topic)) 
+    Promise.all(queries)
+        .then(([articles]) => {
             res.status(200).send({ articles });
         })
         .catch((err) => {
