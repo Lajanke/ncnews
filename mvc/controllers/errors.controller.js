@@ -7,7 +7,15 @@ const handle405s = (req, res) => {
 }
 
 const handleErrors = (err, req, res, next) => {
-    const codes = {
+
+    /*if (err.status) {
+        res.status(err.status).send({ msg: err.msg });
+      } else {
+        next(err);
+      }*/
+
+
+   const codes = {
         'USER NOT FOUND': { status: 404, msg: 'User does not exist' },
         'ARTICLE NOT FOUND': { status: 404, msg: 'No article with this ID found' },
         'COMMENT NOT FOUND': { status: 404, msg: 'No comment with this ID found'},

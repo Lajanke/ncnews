@@ -56,19 +56,7 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', p = 1,
         .limit(limit)
         .offset((p - 1) * limit)
         .then((res) => {
-            if (res.length === 0) {
-                return connection('articles')
-                    .where('article_id', '=', id)
-                    .then((result) => {
-                        if (result.length === 0) {
-                            throw { code: 'ARTICLE NOT FOUND' }
-                        } else {
-                            return res
-                        }
-                    })
-            } else {
-                return res;
-            }
+                return res
         });
 };
 

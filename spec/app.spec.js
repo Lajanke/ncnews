@@ -35,8 +35,8 @@ describe('/api', () => {
                 .expect(405)
                 .then((res) => {
                     expect(res.body.msg).toBe('Method not allowed')
-                })
-        })
+                });
+        });
         return Promise.all(requests);
     });
     describe('/topics', () => {
