@@ -249,8 +249,8 @@ describe('/api', () => {
                         .expect(405)
                         .then((res) => {
                             expect(res.body.msg).toBe('Method not allowed')
-                        })
-                })
+                        });
+                });
                 return Promise.all(requests);
             });
             test('GET: Status 404: Article does not exist', () => {
@@ -305,7 +305,7 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request, cannot update extra fields');
                     });
             });
-            test('Status 404: When passed an article id that does not exist returns not found', () => {
+            test('DELETE: Status 404: When passed an article id that does not exist returns not found', () => {
                 return request(app)
                     .del('/api/articles/200')
                     .expect(404)
@@ -669,7 +669,6 @@ describe('/api', () => {
                             })
                         });
                 });
-
                 test('Queries: If passed an author query that has no articles returns 200 and empty array', () => {
                     return request(app)
                         .get('/api/articles?author=lurker')
@@ -697,7 +696,7 @@ describe('/api', () => {
                             expect(res.body.articles).toEqual([]);
                         });
                 });
-            })
+            });
         });
         describe('POST', () => {
             test('status 201, posts a new article', () => {
@@ -755,9 +754,9 @@ describe('/api', () => {
             test('GET: status 400: Bad request, when passed a topic that does not exist', () => {
                 return request(app)
                     .get('/api/articles?topic=not_a_topic')
-                    .expect(400)
+                    .expect(404)
                     .then((res) => {
-                        expect(res.body.msg).toBe('Bad request');
+                        expect(res.body.msg).toBe('Not found');
                     });
             });
             test('POST: Staus 404: When passed a username that doesn\'t exist returns not found', () => {

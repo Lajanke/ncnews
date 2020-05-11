@@ -2,7 +2,7 @@ const connection = require('../../connection.js');
 
 const patchVotesById = (id, newVotes = 0, num) => {
     if (num > 1) {
-        throw { code: 'TOO MANY PROPERTIES'};
+        return Promise.reject({ status: 400, msg: 'Bad request, cannot update extra fields' });
     };
     return connection('comments')
         .where('comment_id', '=', id)
@@ -10,9 +10,9 @@ const patchVotesById = (id, newVotes = 0, num) => {
         .returning('*')
         .then((res) => {
             if (res.length === 0) {
-                throw { code: 'COMMENT NOT FOUND'}
+                return Promise.reject({ status: 404, msg: 'No comment with this ID found' });
             } else {
-            return res[0];
+                return res[0];
             };
         });
 };
@@ -23,7 +23,7 @@ const deleteCommentById = (id) => {
         .del()
         .then((res) => {
             if (res === 0) {
-                throw { code: 'COMMENT NOT FOUND'};
+                return Promise.reject({ status: 404, msg: 'No comment with this ID found' });
             }
             return res;
         });

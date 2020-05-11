@@ -9,16 +9,16 @@ const fetchArticle = (id) => {
         .where('articles.article_id', '=', id)
         .then((res) => {
             if (res.length === 0) {
-                throw { code: 'ARTICLE NOT FOUND' }
+                return Promise.reject({ status: 404, msg: 'No article with this ID found' });
             } else {
                 return res[0];
-            }
+            };
         });
 };
 
 const alterVotes = (id, newVotes = 0, num) => {
     if (num > 1) {
-        throw { code: 'TOO MANY PROPERTIES' };
+        return Promise.reject({ status: 400, msg: 'Bad request, cannot update extra fields' });
     };
     return connection('articles')
         .where('article_id', '=', id)
@@ -31,10 +31,10 @@ const alterVotes = (id, newVotes = 0, num) => {
 
 const postNewComment = (id, username, body, num) => {
     if (body === '') {
-        throw { code: 'NO BODY' };
+        return Promise.reject({ status: 400, msg: 'Comment cannot be empty' });
     };
     if (num > 2) {
-        throw { code: 'TOO MANY PROPERTIES' };
+        return Promise.reject({ status: 400, msg: 'Bad request, cannot update extra fields' });
     };
     const newComment = { article_id: id, author: username, body: body };
     return connection('comments')
@@ -47,7 +47,7 @@ const postNewComment = (id, username, body, num) => {
 
 const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', p = 1, limit = 10) => {
     if (order !== 'asc' && order !== 'desc') {
-        throw { code: 'INVALID ORDER' };
+        return Promise.reject({ status: 400, msg: 'Cannot order items in this way' });
     };
     return connection('comments')
         .where('article_id', '=', id)
@@ -56,13 +56,13 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', p = 1,
         .limit(limit)
         .offset((p - 1) * limit)
         .then((res) => {
-                return res
+            return res;
         });
 };
 
 const fetchAllArticles = (sort_by = 'created_at', order = 'desc', author, topic, p = 1, limit = 10) => {
     if (order !== 'asc' && order !== 'desc') {
-        throw { code: 'INVALID ORDER' };
+        return Promise.reject({ status: 400, msg: 'Cannot order items in this way' });
     };
     return connection('articles')
         .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
@@ -96,10 +96,10 @@ const deleteArticleById = (id) => {
         .del()
         .then((res) => {
             if (res === 0) {
-                throw { code: 'ARTICLE NOT FOUND' }
+                return Promise.reject({ status: 404, msg: 'No article with this ID found' });
             } else {
                 return res[0];
-            }
+            };
         });
 }
 
