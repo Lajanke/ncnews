@@ -100,10 +100,9 @@ To run the app test file:
 - **Jest-sorted** - extends jest.expect https://www.npmjs.com/package/jest-sorted
 - **Supertest** - Super-agent driven library for testing node.js HTTP servers
 
-## Hosted at:
+## Hosted with Heroku:
 
-
-
+https://lk-news.herokuapp.com/api
 
 ## Author
 
