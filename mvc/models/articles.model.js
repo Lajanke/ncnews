@@ -9,23 +9,23 @@ const fetchArticle = (id) => {
         .where('articles.article_id', '=', id)
         .then((res) => {
             if (res.length === 0) {
-                throw { code: 'ARTICLE NOT FOUND'}
+                throw { code: 'ARTICLE NOT FOUND' }
             } else {
-            return res[0];
+                return res[0];
             }
         });
 };
 
 const alterVotes = (id, newVotes = 0, num) => {
     if (num > 1) {
-        throw { code: 'TOO MANY PROPERTIES'};
+        throw { code: 'TOO MANY PROPERTIES' };
     };
     return connection('articles')
         .where('article_id', '=', id)
         .increment('votes', newVotes)
         .then(() => {
             const res = fetchArticle(id);
-                return res;
+            return res;
         });
 };
 
@@ -34,7 +34,7 @@ const postNewComment = (id, username, body, num) => {
         throw { code: 'NO BODY' };
     };
     if (num > 2) {
-        throw { code: 'TOO MANY PROPERTIES'};
+        throw { code: 'TOO MANY PROPERTIES' };
     };
     const newComment = { article_id: id, author: username, body: body };
     return connection('comments')
@@ -47,7 +47,7 @@ const postNewComment = (id, username, body, num) => {
 
 const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', p = 1, limit = 10) => {
     if (order !== 'asc' && order !== 'desc') {
-        throw { code: 'INVALID ORDER'};
+        throw { code: 'INVALID ORDER' };
     };
     return connection('comments')
         .where('article_id', '=', id)
@@ -57,24 +57,24 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', p = 1,
         .offset((p - 1) * limit)
         .then((res) => {
             if (res.length === 0) {
-               return connection('articles')
-               .where('article_id', '=', id)
-               .then((result) => {
-                   if (result.length === 0) {
-                    throw { code: 'ARTICLE NOT FOUND'}
-                   } else { 
-                       return res
-                    }
-               })    
+                return connection('articles')
+                    .where('article_id', '=', id)
+                    .then((result) => {
+                        if (result.length === 0) {
+                            throw { code: 'ARTICLE NOT FOUND' }
+                        } else {
+                            return res
+                        }
+                    })
             } else {
                 return res;
             }
         });
 };
 
-const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic, p = 1, limit = 10 ) => {
+const fetchAllArticles = (sort_by = 'created_at', order = 'desc', author, topic, p = 1, limit = 10) => {
     if (order !== 'asc' && order !== 'desc') {
-        throw { code: 'INVALID ORDER'};
+        throw { code: 'INVALID ORDER' };
     };
     return connection('articles')
         .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
@@ -82,15 +82,15 @@ const fetchAllArticles = ( sort_by = 'created_at', order = 'desc', author, topic
         .count('comments.article_id as comment_count')
         .groupBy('articles.article_id')
         .orderBy(sort_by, order)
-        .modify( query => {
-            if(author) query.where('articles.author', '=', author);
-            if(topic) query.where('articles.topic', '=', topic);
+        .modify(query => {
+            if (author) query.where('articles.author', '=', author);
+            if (topic) query.where('articles.topic', '=', topic);
         })
-        .limit(limit)     
+        .limit(limit)
         .offset((p - 1) * limit)
         .then((res) => {
             if (res.length === 0) {
-                throw { code: 'NO ARTICLES WITH PROP'}
+                throw { code: 'NO ARTICLES WITH PROP' }
             }
             return res;
         });
@@ -106,19 +106,24 @@ const postNewArticle = (article) => {
 };
 
 const deleteArticleById = (id) => {
-    console.log(id)
     return connection('articles')
         .where('article_id', '=', id)
         .del()
         .then((res) => {
-            return res;
-        })
+            if (res === 0) {
+                throw { code: 'ARTICLE NOT FOUND' }
+            } else {
+                return res[0];
+            }
+        });
 }
 
-module.exports = {  fetchArticle, 
-                    alterVotes, 
-                    postNewComment, 
-                    fetchArticleComments, 
-                    fetchAllArticles, 
-                    postNewArticle,
-                    deleteArticleById, }
+module.exports = {
+    fetchArticle,
+    alterVotes,
+    postNewComment,
+    fetchArticleComments,
+    fetchAllArticles,
+    postNewArticle,
+    deleteArticleById,
+}

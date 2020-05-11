@@ -305,6 +305,22 @@ describe('/api', () => {
                         expect(res.body.msg).toBe('Bad request, cannot update extra fields');
                     });
             });
+            test('Status 404: When passed an article id that does not exist returns not found', () => {
+                return request(app)
+                    .del('/api/articles/200')
+                    .expect(404)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('No article with this ID found')
+                    });
+            });
+            test('Status 400: When passed an incorrect id returns bad request', () => {
+                return request(app)
+                    .del('/api/articles/cat')
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.msg).toBe('Bad request')
+                    });
+            });
         });
     });
     describe('/articles/:article_id/comments', () => {

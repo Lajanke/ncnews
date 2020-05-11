@@ -14,7 +14,7 @@ const getArticle = (req, res, next) => {
         })
         .catch((err) => {
             next(err);
-        })
+        });
 };
 
 const patchVotes = (req, res, next) => {
@@ -59,7 +59,6 @@ const getAllArticles = (req, res, next) => {
     const { sort_by, order, author, topic, p, limit } = req.query;
     fetchAllArticles(sort_by, order, author, topic, p, limit)
         .then((articles) => {
-            console.log(articles)
             res.status(200).send({ articles });
         })
         .catch((err) => {
