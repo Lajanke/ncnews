@@ -395,7 +395,7 @@ describe('/api', () => {
                         expect(res.body.comments).toEqual([]);
                     });
             });
-            describe('pagination', () => {
+            describe('Comments pagination', () => {
                 test('Defaults to return only 10 results per page', () => {
                     return request(app)
                         .get('/api/articles/1/comments')
@@ -417,6 +417,15 @@ describe('/api', () => {
                                 created_at: '2006-11-25T12:36:03.389Z',
                                 body: 'Massive intercranial brain haemorrhage'
                             });
+                        });
+                });
+                test('Returns a total count with paginated results', () => {
+                    return request(app)
+                        .get('/api/articles/1/comments?p=1&limit=10')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body).toHaveProperty('total_count');
+                            expect(res.body.total_count).toBe(13);
                         });
                 });
                 test('Staus 200: Serves up an empty array when pagination is further along that results length', () => {
@@ -604,7 +613,7 @@ describe('/api', () => {
                         });
                     });
             });
-            describe('pagination', () => {
+            describe('Articles pagination', () => {
                 test('Returns only 10 results per page', () => {
                     return request(app)
                         .get('/api/articles?p=1&limit=10')

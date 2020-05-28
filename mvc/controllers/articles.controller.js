@@ -53,8 +53,8 @@ const getArticleComments = (req, res, next) => {
     const { sort_by, order, p, limit } = req.query;
     const queries = [fetchArticleComments(article_id, sort_by, order, p, limit), fetchArticle(article_id)]
     Promise.all(queries)
-        .then(([comments]) => {
-            res.status(200).send({ comments });
+        .then(([comments, {comment_count}]) => {
+            res.status(200).send({ comments, total_count: Number(comment_count) });
         })
         .catch((err) => {
             next(err)
