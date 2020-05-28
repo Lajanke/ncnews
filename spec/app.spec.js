@@ -630,6 +630,15 @@ describe('/api', () => {
                             });
                         });
                 });
+                test('Returns a total count with paginated result', () => {
+                    return request(app)
+                        .get('/api/articles?p=1&limit=10')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body).toHaveProperty('total_count');
+                            expect(res.body.total_count).toBe(12);
+                        });
+                });
             });
             describe('queries', () => {
                 test('Queries: Accepts an order query to change to ascending', () => {

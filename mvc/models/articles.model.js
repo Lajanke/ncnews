@@ -81,6 +81,25 @@ const fetchAllArticles = (sort_by = 'created_at', order = 'desc', author, topic,
         });
 };
 
+const articlesTotalCount = (sort_by = 'created_at', order = 'desc', author, topic, p = 1, limit = 10) => {
+    if (order !== 'asc' && order !== 'desc') {
+        return Promise.reject({ status: 400, msg: 'Cannot order items in this way' });
+    };
+    return connection('articles')
+        .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
+        .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes')
+        .count('comments.article_id as comment_count')
+        .groupBy('articles.article_id')
+        .orderBy(sort_by, order)
+        .modify(query => {
+            if (author) query.where('articles.author', '=', author);
+            if (topic) query.where('articles.topic', '=', topic);
+        })
+        .then((res) => {
+            return res.length
+        });
+};
+
 const postNewArticle = (article) => {
     return connection('articles')
         .insert(article)
@@ -98,7 +117,7 @@ const deleteArticleById = (id) => {
             if (res === 0) {
                 return Promise.reject({ status: 404, msg: 'No article with this ID found' });
             } else {
-                return res[0];
+                return res;
             };
         });
 }
@@ -111,4 +130,5 @@ module.exports = {
     fetchAllArticles,
     postNewArticle,
     deleteArticleById,
+    articlesTotalCount,
 }

@@ -4,7 +4,8 @@ const { fetchArticle,
         fetchArticleComments, 
         fetchAllArticles, 
         postNewArticle,
-        deleteArticleById } = require('../models/articles.model');
+        deleteArticleById,
+        articlesTotalCount, } = require('../models/articles.model');
 
 const { fetchUser } = require('../models/users.model.js');
 
@@ -62,12 +63,12 @@ const getArticleComments = (req, res, next) => {
 
 const getAllArticles = (req, res, next) => {
     const { sort_by, order, author, topic, p, limit } = req.query;
-    const queries = [ fetchAllArticles(sort_by, order, author, topic, p, limit) ]
+    const queries = [ fetchAllArticles(sort_by, order, author, topic, p, limit), articlesTotalCount(sort_by, order, author, topic,) ] //add second quey here for total count
     if (author) queries.push(fetchUser(author)) 
     if (topic) queries.push(fetchTopicByName(topic)) 
     Promise.all(queries)
-        .then(([articles]) => {
-            res.status(200).send({ articles });
+        .then(([articles, total_count]) => {
+            res.status(200).send({ articles, total_count });
         })
         .catch((err) => {
             next(err);
