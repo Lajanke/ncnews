@@ -60,7 +60,7 @@ const fetchArticleComments = (id, sort_by = 'created_at', order = 'desc', p = 1,
         });
 };
 
-const fetchAllArticles = (sort_by = 'created_at', order = 'desc', author, topic, p = 1, limit = 10) => {
+const fetchAllArticles = (sort_by = 'created_at', order = 'desc', author, topic, p = 1, limit = 10,) => {
     if (order !== 'asc' && order !== 'desc') {
         return Promise.reject({ status: 400, msg: 'Cannot order items in this way' });
     };
@@ -69,7 +69,7 @@ const fetchAllArticles = (sort_by = 'created_at', order = 'desc', author, topic,
         .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes')
         .count('comments.article_id as comment_count')
         .groupBy('articles.article_id')
-        .orderBy(sort_by, order)
+        .orderBy([{column: sort_by, order: order}, {column: 'article_id', order: 'asc'}])
         .modify(query => {
             if (author) query.where('articles.author', '=', author);
             if (topic) query.where('articles.topic', '=', topic);
